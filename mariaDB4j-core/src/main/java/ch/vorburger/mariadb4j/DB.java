@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.vorburger.exec.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +82,7 @@ public class DB {
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
-     * 
+     *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -103,7 +102,7 @@ public class DB {
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
      * configuration, allowing only for specifying port.
-     * 
+     *
      * @param port the port to start the embedded database on
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -114,7 +113,7 @@ public class DB {
         return newEmbeddedDB(config.build());
     }
 
-    ManagedProcess installPreparation() throws ManagedProcessException, IOException {
+    protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
         File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
         if (!installDbCmdFile.exists())
@@ -129,7 +128,7 @@ public class DB {
         if (!configuration.isWindows()) {
             // Since 10.4.6, this needs to be specified to allow root login from any user and avoid creating an extra user,
             // basically like it used to do in 10.3 and before
-            builder.addArgument("--auth-root-authentication-method=normal");            
+            builder.addArgument("--auth-root-authentication-method=normal");
             builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -167,12 +166,12 @@ public class DB {
 
     /**
      * Installs the database to the location specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     synchronized protected void install() throws ManagedProcessException {
         try {
-            ManagedProcess mysqlInstallProcess = installPreparation();
+            ManagedProcess mysqlInstallProcess = createDBInstallProcess();
             mysqlInstallProcess.start();
             mysqlInstallProcess.waitForExit();
         } catch (Exception e) {
@@ -184,13 +183,13 @@ public class DB {
 
     /**
      * Runs mysql secure installation script
-     * 
+     *
      * @throws ManagedProcessException if something went wrong
      */
     synchronized protected void runMysqlSecureInstallationScript() throws ManagedProcessException {
         if (StringUtils.isEmpty(configuration.getDefaultRootPassword())) {
-            logger.info("*** crafter-set-env.sh hasn't been upgraded within your bundle. " + 
-                    "The property MARIADB_ROOT_PASSWD is set to empty. " + 
+            logger.info("*** crafter-set-env.sh hasn't been upgraded within your bundle. " +
+                    "The property MARIADB_ROOT_PASSWD is set to empty. " +
                     "The database secure installation script will not be run. ***");
             return;
         }
@@ -204,7 +203,7 @@ public class DB {
             } catch (Exception e) {
                 logger.error("Error connecting to database", e);
             }
-            
+
             boolean secured = false;
             try (Connection conn = DriverManager.getConnection(configuration.getURL("mysql"), "root", "")) {
                 secured = false;
@@ -230,7 +229,7 @@ public class DB {
             }
             stop();
         }
-        
+
     }
 
     protected String getWinExeExt() {
@@ -239,7 +238,7 @@ public class DB {
 
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
@@ -253,7 +252,7 @@ public class DB {
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
-            if (mysqldProcess.isAlive())
+            if (mysqldProcess != null && mysqldProcess.isAlive())
                 mysqldProcess.destroy();
             throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
                     + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
@@ -323,7 +322,7 @@ public class DB {
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
      * so we double check.
-     * 
+     *
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
@@ -336,14 +335,35 @@ public class DB {
         source(resource, null, null, null);
     }
 
+    public void source(InputStream resource) throws ManagedProcessException {
+        source(resource, null, null, null);
+    }
+
     public void source(String resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
+    }
+
+    public void source(InputStream resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
+    }
+
+    /**
+     * Takes in a {@link InputStream} and sources it via the mysql command line tool.
+     *
+     * @param resource an {@link InputStream} InputStream to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(InputStream resource, String username, String password, String dbName) throws ManagedProcessException {
+        run("script file sourced from an InputStream", resource, username, password, dbName, false);
     }
 
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.
-     * 
+     *
      * @param resource the path to a resource on the classpath to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
@@ -366,14 +386,17 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
-        if (from == null)
-            throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
+            if (from == null)
+                throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+            run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
-        run(command, username, password, dbName, false);
+        run(command, username, password, dbName, false, true);
     }
 
     public void run(String command) throws ManagedProcessException {
@@ -385,8 +408,20 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
-        run("command: " + command, from, username, password, dbName, force);
+        run(command, username, password, dbName, force, true);
+    }
+
+    public void run(String command, String username, String password, String dbName, boolean force, boolean verbose) throws ManagedProcessException {
+        // If resource is created here, it should probably be released here also (as opposed to in protected run method)
+        // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
+        try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
+            final String logInfoText = verbose
+                                       ? "command: " + command
+                                       : "command (" + (command.length() / 1_024) + " KiB long)";
+            run(logInfoText, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
@@ -416,8 +451,6 @@ public class DB {
             process.waitForExit();
         } catch (Exception e) {
             throw new ManagedProcessException("An error occurred while running a " + logInfoText, e);
-        } finally {
-            IOUtils.closeQuietly(fromIS);
         }
         logger.info("Successfully ran the " + logInfoText);
     }
@@ -436,11 +469,11 @@ public class DB {
 
     /**
      * Stops the database.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
-        if (mysqldProcess.isAlive()) {
+        if (mysqldProcess != null && mysqldProcess.isAlive()) {
             logger.debug("Stopping the database...");
             mysqldProcess.destroy();
             logger.info("Database stopped.");
@@ -481,7 +514,7 @@ public class DB {
     /**
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {
@@ -522,13 +555,13 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                                     && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
-                                    && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
+                                    && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }

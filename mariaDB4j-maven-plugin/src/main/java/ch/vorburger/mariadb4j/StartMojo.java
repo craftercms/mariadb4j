@@ -50,11 +50,10 @@ public class StartMojo extends AbstractRunMojo {
             DBSingleton.setDB(db);
             db.start();
 
-
             if (!databaseName.equals("test")) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
-               db.createDB(databaseName);
+               db.createDB(databaseName, "root", "root");
             }
             this.runScripts(db, databaseName);
 

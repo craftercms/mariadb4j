@@ -6,12 +6,17 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.4.8</version>
+        <version>2.4.9</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mariadb4j-maven-plugin-test-basic</artifactId>
+
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+        <license.skipCheckLicense>true</license.skipCheckLicense>
+    </properties>
 
     <build>
         <plugins>
@@ -36,6 +41,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
@@ -71,12 +77,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

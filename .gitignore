@@ -1,3 +1,4 @@
+tmpDir/
 target/
 .settings/
 .idea
@@ -7,3 +8,5 @@ target/
 .classpath
 .checkstyle
 *.tar.gz
+.vscode/
+.factorypath

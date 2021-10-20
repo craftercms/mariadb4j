@@ -9,18 +9,18 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>2.4.8</version>
+        <version>2.4.10</version>
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-binaries</artifactId>
     <name>mariaDB4j Platform binaries</name>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
-    <version>10.4.6.8</version>
+    <version>10.4.20</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>mariaDB4j-db-mac64-10.4.6</module>
-        <module>mariaDB4j-db-linux64-10.4.6</module>
+        <module>mariaDB4j-db-mac64-10.4.20</module>
+        <module>mariaDB4j-db-linux64-10.4.20</module>
     </modules>
 </project>

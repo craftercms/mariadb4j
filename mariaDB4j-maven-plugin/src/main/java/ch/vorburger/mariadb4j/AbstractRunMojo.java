@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -144,6 +143,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                 configurationBuilder.addArg(arg);
             }
         }
+        configurationBuilder.setSecurityDisabled(false);
+        configurationBuilder.setDefaultRootPassword("root");
         DBSingleton.setConfigurationBuilder(configurationBuilder);
         return configurationBuilder;
     }
@@ -163,7 +164,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                 //Though we should have in db to pass a file or inputstream so we don't overload memory. So
                 //TODO: add new function to db public void source(File resource, String username, String password, String dbName)
                 String scriptText = new String(Files.readAllBytes(scriptFile.toPath()), charset);
-                db.run(scriptText, null, null, dbName);
+                db.run(scriptText, "root", "root", dbName);
 
             }
             getLog().info("Successfully run scripts");

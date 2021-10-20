@@ -28,6 +28,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
  * 
@@ -51,13 +53,15 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
+    public final static String ARGS = "mariaDB4j.args";
+    public final static String OS_USER = "mariaDB4j.osUser";
     public final static String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
     public final static String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
     public final static String DRIVER_CLASS_NAME= "mariaDB4j.driverClassName";
 
     protected ManagedProcessException lastException;
 
-    @Value("${$DBVersion:mariadb-10.4.6}")
+    @Value("${$DBVersion:mariadb-10.4.20}")
     public void setDBVersion(String version){
         getConfiguration().setDatabaseVersion(version);
     }
@@ -95,6 +99,21 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
         if (unpack != null)
             getConfiguration().setUnpackingFromClasspath(unpack);
+    }
+
+    @Value("${" + ARGS + ":#{null}}")
+    public void setArgs(List<String> args) {
+        if (args != null && args.size() > 0) {
+            for (String arg : args) {
+                getConfiguration().addArg(arg);
+            }
+        }
+    }
+
+    @Value("${" + OS_USER + ":NA}")
+    public void setDefaultOsUser(String osUser) {
+        if (!"NA".equals(osUser))
+            getConfiguration().addArg("--user=" + osUser);
     }
 
     @Value("${" + SECURITY_DISABLED + ":#{null}}")

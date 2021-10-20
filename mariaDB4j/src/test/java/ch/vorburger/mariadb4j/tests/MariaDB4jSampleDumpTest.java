@@ -39,7 +39,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import ch.vorburger.exec.ManagedProcess;
@@ -60,16 +59,17 @@ public class MariaDB4jSampleDumpTest {
 
     @Before public void beforeTest() throws ManagedProcessException, SQLException {
         config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0);
-        db = DB.newEmbeddedDB(// 0 => autom. detect free port
-        config.build());
+        config.setPort(0);// 0 => autom. detect free port
+        config.setSecurityDisabled(false);
+        config.setDefaultRootPassword("root");
+        db = DB.newEmbeddedDB(config.build());
         db.start();
-        db.createDB("planetexpress");
-        db.source("ch/vorburger/mariadb4j/dumpTest.sql");
+        db.createDB("planetexpress", "root", "root");
+        db.source("ch/vorburger/mariadb4j/dumpTest.sql", "root", "root", "planetexpress");
 
         // Now check DB's integrity
         Connection conn;
-        conn = DriverManager.getConnection(config.getURL(DBNAME), "root", "");
+        conn = DriverManager.getConnection(config.getURL(DBNAME), "root", "root");
         QueryRunner qr = new QueryRunner();
         // Should be able to create a new table
         List<String> results = qr.query(conn, "SELECT * FROM crew;", new ColumnListHandler<String>());
@@ -79,7 +79,7 @@ public class MariaDB4jSampleDumpTest {
 
     @Test public void sqlDump() throws IOException, ManagedProcessException, SQLException {
         File outputDumpFile = File.createTempFile("sqlDump ", ".sql");
-        ManagedProcess dumpProcess = db.dumpSQL(outputDumpFile, DBNAME, "root", "");
+        ManagedProcess dumpProcess = db.dumpSQL(outputDumpFile, DBNAME, "root", "root");
         dumpProcess.start();
         assertEquals(0, dumpProcess.waitForExit());
         assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
@@ -89,7 +89,7 @@ public class MariaDB4jSampleDumpTest {
 
     @Test public void xmlDump() throws IOException, SAXException, ManagedProcessException, ParserConfigurationException, SQLException {
         File outputDumpFile = File.createTempFile("xmlsqlDump", ".xml");
-        ManagedProcess dumpProcess = db.dumpXML(outputDumpFile, DBNAME, "root", "");
+        ManagedProcess dumpProcess = db.dumpXML(outputDumpFile, DBNAME, "root", "root");
         dumpProcess.start();
         assertEquals(0, dumpProcess.waitForExit());
         assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
@@ -97,7 +97,7 @@ public class MariaDB4jSampleDumpTest {
         // We just want to check that the file is a valid XML, output of it is mysqldump's responsability
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(outputDumpFile);
+        dBuilder.parse(outputDumpFile);
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 

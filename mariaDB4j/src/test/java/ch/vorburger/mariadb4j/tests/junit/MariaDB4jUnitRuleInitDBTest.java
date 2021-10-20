@@ -38,13 +38,15 @@ public class MariaDB4jUnitRuleInitDBTest {
     private final String DB_NAME = "junittest";
 
     @Rule
-    public MariaDB4jRule dbRule = new MariaDB4jRule(DBConfigurationBuilder.newBuilder().build(), DB_NAME, "ch/vorburger/mariadb4j/basicSource.sql");
+    public MariaDB4jRule dbRule = new MariaDB4jRule(DBConfigurationBuilder.newBuilder().
+            setSecurityDisabled(false).setDefaultRootPassword("root").build(),
+            DB_NAME, "ch/vorburger/mariadb4j/basicSource.sql");
 
     @Test
     public void validateSourceInitialization() throws SQLException {
         String connString = dbRule.getURL();
         Connection conn;
-        conn = DriverManager.getConnection(connString, "root", "");
+        conn = DriverManager.getConnection(connString, "root", "root");
         QueryRunner qr = new QueryRunner();
 
         // Should be able to create a new table

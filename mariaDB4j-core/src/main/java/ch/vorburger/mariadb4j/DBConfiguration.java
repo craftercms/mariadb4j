@@ -30,14 +30,14 @@ import java.util.function.Function;
  */
 public interface DBConfiguration {
 
-    /** 
-     * TCP Port to start DB server on. 
+    /**
+     * TCP Port to start DB server on.
      * @return returns port value
      **/
     int getPort();
 
-    /** 
-     * UNIX Socket to start DB server on (ignored on Windows). 
+    /**
+     * UNIX Socket to start DB server on (ignored on Windows).
      * @return returns socket value
      **/
     String getSocket();
@@ -48,16 +48,16 @@ public interface DBConfiguration {
      */
     String getBinariesClassPathLocation();
 
-    /** 
-     * Base directory where DB binaries are expected to be found. 
+    /**
+     * Base directory where DB binaries are expected to be found.
      * @return returns base directory value
      **/
     String getBaseDir();
 
     String getLibDir();
 
-    /** 
-     * Base directory for DB's actual data files. 
+    /**
+     * Base directory for DB's actual data files.
      * @return returns data directory value
      **/
     String getDataDir();
@@ -71,8 +71,8 @@ public interface DBConfiguration {
      */
     boolean isDeletingTemporaryBaseAndDataDirsOnShutdown();
 
-    /** 
-     * Whether running on Windows (some start-up parameters are different). 
+    /**
+     * Whether running on Windows (some start-up parameters are different).
      * @return returns boolean isWindows
      **/
     boolean isWindows();
@@ -87,15 +87,15 @@ public interface DBConfiguration {
      */
     ManagedProcessListener getProcessListener();
 
-    /** 
-     * Whether to to "--skip-grant-tables". 
+    /**
+     * Whether to to "--skip-grant-tables".
      * @return returns boolean isSecurityDisabled value
      **/
     boolean isSecurityDisabled();
 
     /**
      * Returns default root password
-     * 
+     *
      * @return default root password
      */
     String getDefaultRootPassword();
