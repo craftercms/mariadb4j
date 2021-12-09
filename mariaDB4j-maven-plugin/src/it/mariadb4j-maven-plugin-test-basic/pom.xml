@@ -3,13 +3,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.4.9</version>
+        <version>2.5.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mariadb4j-maven-plugin-test-basic</artifactId>
 
@@ -21,9 +22,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.craftercms.mariaDB4j</groupId>
-                <artifactId>mariaDB4j-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
                 <executions>
                     <execution>
                         <goals>
@@ -48,6 +49,7 @@
                     <systemPropertyVariables>
                         <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
                         <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                        <mariadb.databaseurl>${mariadb4j.databaseurl}</mariadb.databaseurl>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>
