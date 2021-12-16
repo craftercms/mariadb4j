@@ -134,8 +134,8 @@ public class MariaDB4jStartMojoTest {
 
     private Connection openConnection(DB db, String databaseName) throws SQLException {
         assertThat(db).isNotNull();
-        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName +
-                "?serverTimezone=UTC&user=root&password=root";
+        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName
+                + "?serverTimezone=UTC&user=root&password=root";
         return DriverManager.getConnection(jdbcUrl);
     }
 

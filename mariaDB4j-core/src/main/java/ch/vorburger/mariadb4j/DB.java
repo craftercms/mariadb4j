@@ -24,7 +24,6 @@ import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,15 +37,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.slf4j.event.Level;
 
 /**
  * Provides capability to install, start, and use an embedded database.
@@ -184,15 +179,15 @@ public class DB {
 
 
     /**
-     * Runs mysql secure installation script
+     * Runs mysql secure installation script.
      *
      * @throws ManagedProcessException if something went wrong
      */
     synchronized protected void runMysqlSecureInstallationScript() throws ManagedProcessException {
         if (StringUtils.isEmpty(configuration.getDefaultRootPassword())) {
-            logger.info("*** crafter-set-env.sh hasn't been upgraded within your bundle. " +
-                    "The property MARIADB_ROOT_PASSWD is set to empty. " +
-                    "The database secure installation script will not be run. ***");
+            logger.info("*** crafter-set-env.sh hasn't been upgraded within your bundle. "
+                    + "The property MARIADB_ROOT_PASSWD is set to empty. "
+                    + "The database secure installation script will not be run. ***");
             return;
         }
         ManagedProcess mysqlSecureInstallProcess = null;
