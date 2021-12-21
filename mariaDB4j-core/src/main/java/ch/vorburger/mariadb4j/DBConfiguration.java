@@ -20,7 +20,6 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -94,14 +93,14 @@ public interface DBConfiguration {
     boolean isSecurityDisabled();
 
     /**
-     * Returns default root password
+     * Returns default root password.
      *
      * @return default root password
      */
     String getDefaultRootPassword();
 
     /**
-     * Returns driver class name
+     * Returns driver class name.
      * @return driver class name
      */
     String getDriverClassName();

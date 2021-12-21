@@ -21,14 +21,12 @@ package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.MariaDB4jService;
-
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
@@ -57,14 +55,15 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String OS_USER = "mariaDB4j.osUser";
     public final static String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
     public final static String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
-    public final static String DRIVER_CLASS_NAME= "mariaDB4j.driverClassName";
+    public final static String DRIVER_CLASS_NAME = "mariaDB4j.driverClassName";
 
     protected ManagedProcessException lastException;
 
     @Value("${$DBVersion:mariadb-10.4.20}")
-    public void setDBVersion(String version){
+    public void setDBVersion(String version) {
         getConfiguration().setDatabaseVersion(version);
     }
+
     @Value("${" + PORT + ":-1}")
     public void setDefaultPort(int port) {
         if (port != -1)
