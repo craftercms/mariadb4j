@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariaDB4j;
+package ch.vorburger.mariadb4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,10 +27,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.utils.DBSingleton;
 import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -40,51 +40,40 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.StopMojo;
-import ch.vorburger.mariadb4j.utils.DBSingleton;
-
 /**
- *  StopMojoTest mocking database testing function
+ * StopMojoTest mocking database testing function.
  *
- *  @author William Dutton
+ * @author William Dutton
  */
 public class StopMojoTest {
 
     StopMojo stopMojo;
 
-    @Mock
-    Log mockLog;
+    @Mock Log mockLog;
 
-    @Mock
-    DB mockDb;
+    @Mock DB mockDb;
 
-    @Captor
-    ArgumentCaptor<String> logCaptor;
+    @Captor ArgumentCaptor<String> logCaptor;
 
-    @Before
-    public void setUp() {
+    @Before public void setUp() {
         MockitoAnnotations.initMocks(this);
         DBSingleton.setDB(mockDb);
         stopMojo = new StopMojo();
         stopMojo.setLog(mockLog);
     }
 
-    @Test
-    public void stopWithSkipEnabledDoesNotStopDatabase() throws Exception {
+    @Test public void stopWithSkipEnabledDoesNotStopDatabase() throws Exception {
         stopMojo.setSkip(true);
         stopMojo.execute();
 
-        verifyZeroInteractions(mockDb);
+        verifyNoMoreInteractions(mockDb);
         verify(mockLog, times(1)).debug(logCaptor.capture());
         verifyNoMoreInteractions(mockLog);
 
         assertEquals("skipping stop as per configuration.", logCaptor.getValue());
     }
 
-    @Test
-    public void stopCallsDbSingleton() throws Exception {
+    @Test public void stopCallsDbSingleton() throws Exception {
         stopMojo.execute();
 
         verify(mockDb).stop();
@@ -94,8 +83,7 @@ public class StopMojoTest {
         assertEquals("Stopping MariaDB4j...", logCaptor.getValue());
     }
 
-    @Test
-    public void stopCallsDbSingletonAndHandlesManagedProcessException() throws Exception {
+    @Test public void stopCallsDbSingletonAndHandlesManagedProcessException() throws Exception {
         DB mockDb = mock(DB.class);
         DBSingleton.setDB(mockDb);
 
@@ -106,7 +94,7 @@ public class StopMojoTest {
             stopMojo.execute();
             fail("Should have thrown exception");
         } catch (MojoExecutionException e) {
-            //expected
+            // expected
             assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefull"));
         }
 

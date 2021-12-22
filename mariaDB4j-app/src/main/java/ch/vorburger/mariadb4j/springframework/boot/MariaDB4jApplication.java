@@ -53,7 +53,7 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
         app.setBannerMode(Mode.OFF);
         app.run(args);
 
-        while(true) { }
+        while (true) { }
     }
 
     @Override

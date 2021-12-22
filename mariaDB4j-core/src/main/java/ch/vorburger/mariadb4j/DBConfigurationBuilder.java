@@ -20,7 +20,6 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -178,9 +177,10 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener(), getDefaultRootPassword(), getDriverClassName());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
+                getLibDir(), _getDataDir(), WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(),
+                isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
+                getProcessListener(), getDefaultRootPassword(), getDriverClassName());
     }
 
     /**

@@ -21,12 +21,12 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
+import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.io.IOException;
 
 /**
  * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
@@ -43,6 +43,8 @@ import java.io.IOException;
         requiresDependencyResolution = ResolutionScope.TEST)
 public class StartMojo extends AbstractRunMojo {
 
+    private static final String PROPNAME_DATABASE_URL = "mariadb4j.databaseurl";
+
     @Override
     protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         try {
@@ -53,11 +55,14 @@ public class StartMojo extends AbstractRunMojo {
             if (!databaseName.equals("test")) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
-               db.createDB(databaseName, "root", "root");
+                db.createDB(databaseName, "root", "root");
             }
             this.runScripts(db, databaseName);
 
-            getLog().warn("Database started and is configured on " + DBSingleton.getConfigurationBuilder().getURL(databaseName));
+            String databaseURL = DBSingleton.getConfigurationBuilder().getURL(databaseName);
+            getProject().getProperties().setProperty(PROPNAME_DATABASE_URL, databaseURL);
+
+            getLog().warn("Database started and is configured on " + databaseURL);
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
                     "Could not setup, start database", ex);
