@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>2.5.0</version>
+        <version>2.4.12.1</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
 	<artifactId>mariaDB4j-pom</artifactId>
-	<version>2.5.0</version>
+	<version>2.4.12.1</version>
 	<packaging>pom</packaging>
 
     <scm>
@@ -91,7 +91,7 @@
 				    </execution>
 				</executions>
 			</plugin>
-
+<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -108,7 +108,7 @@
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
-					<failsOnError>true</failsOnError>
+					<failsOnError>false</failsOnError>
 				</configuration>
 				<executions>
 					<execution>
@@ -120,6 +120,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
 		</plugins>
 	</build>
 
