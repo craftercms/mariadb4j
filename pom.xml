@@ -34,7 +34,7 @@
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <springboot.version>2.6.1</springboot.version>
+		 <springboot.version>2.6.2</springboot.version>
 		 <maven.compiler.source>1.8</maven.compiler.source>
 		 <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -44,7 +44,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.9.0</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
@@ -55,7 +55,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>3.0.0-M4</version>
+				<version>3.0.0-M5</version>
 				<configuration>
 				    <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
@@ -136,7 +136,7 @@
 	        <dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-				<version>1.7.32</version>
+				<version>1.7.33</version>
 	            <scope>test</scope>
 			</dependency>
             <dependency>
