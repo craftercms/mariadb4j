@@ -9,7 +9,7 @@
     </parent>
 
 	<artifactId>mariaDB4j-pom</artifactId>
-	<version>2.5.1</version>
+	<version>2.5.3</version>
 	<packaging>pom</packaging>
 
     <scm>
@@ -105,10 +105,12 @@
                 </dependencies>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
+					<!- https://github.com/vorburger/MariaDB4j/issues/511 ->
+					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
-					<failsOnError>false</failsOnError>
+					<failsOnError>true</failsOnError>
 				</configuration>
 				<executions>
 					<execution>
@@ -144,7 +146,24 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.11.0</version>
             </dependency>
+            <!-- TODO remove when springboot.version is 2.6.2 instead of 2.6.1;
+                 see https://github.com/vorburger/MariaDB4j/issues/509 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <!-- MariaDB4j does not actually use log4j-core, this is here just out of extra precaution -->
+                <artifactId>log4j-core</artifactId>
+                <version>2.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>2.15.0</version>
+            </dependency>
 	    </dependencies>
 	</dependencyManagement>
-
 </project>
