@@ -19,12 +19,23 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import static java.util.Objects.requireNonNull;
+
 import ch.vorburger.exec.ManagedProcessListener;
+import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -39,6 +50,8 @@ public class DBConfigurationBuilder {
 
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
+    private static final String DEFAULT_TMP_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/tmp";
+
     private String databaseVersion = null;
 
     // all these are just some defaults
@@ -48,11 +61,12 @@ public class DBConfigurationBuilder {
     protected String libDir = null;
 
     protected String dataDir = DEFAULT_DATA_DIR;
+    protected String tmpDir = DEFAULT_TMP_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
     protected boolean isUnpackingFromClasspath = true;
-    protected List<String> args = new ArrayList<String>();
+    protected List<String> args = new ArrayList<>();
     private boolean isSecurityDisabled = true;
     private String defaultRootPassword;
     private String driverClassName = "org.mariadb.jdbc.Driver";
@@ -60,15 +74,20 @@ public class DBConfigurationBuilder {
     private boolean frozen = false;
     private ManagedProcessListener listener;
 
+    protected String defaultCharacterSet = null;
+    protected Map<Executable, Supplier<File>> executables = new HashMap<>();
+
     public static DBConfigurationBuilder newBuilder() {
         return new DBConfigurationBuilder();
     }
 
-    protected DBConfigurationBuilder() {}
+    protected DBConfigurationBuilder() {
+    }
 
     protected void checkIfFrozen(String setterName) {
-        if (frozen)
+        if (frozen) {
             throw new IllegalStateException("cannot " + setterName + "() anymore after build()");
+        }
     }
 
     public String getBaseDir() {
@@ -82,10 +101,10 @@ public class DBConfigurationBuilder {
     }
 
     public String getLibDir() {
-        if (libDir == null)
+        if (libDir == null) {
             return baseDir + "/libs";
-        else
-            return libDir;
+        }
+        return libDir;
     }
 
     public DBConfigurationBuilder setLibDir(String libDir) {
@@ -101,6 +120,16 @@ public class DBConfigurationBuilder {
     public DBConfigurationBuilder setDataDir(String dataDir) {
         checkIfFrozen("setDataDir");
         this.dataDir = dataDir;
+        return this;
+    }
+
+    public String getTmpDir() {
+        return tmpDir;
+    }
+
+    public DBConfigurationBuilder setTmpDir(String tmpDir) {
+        checkIfFrozen("setTmpDir");
+        this.tmpDir = tmpDir;
         return this;
     }
 
@@ -122,6 +151,7 @@ public class DBConfigurationBuilder {
 
     /**
      * Set a custom process listener to listen to DB start/shutdown events.
+     *
      * @param listener custom listener
      * @return this
      */
@@ -143,12 +173,13 @@ public class DBConfigurationBuilder {
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
      * then they'll also never get deleted anyway.
+     *
      * @param doDelete Default valule is true, set false to override
      * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
         checkIfFrozen("keepsDataAndBaseDir");
-        this.isDeletingTemporaryBaseAndDataDirsOnShutdown = doDelete;
+        isDeletingTemporaryBaseAndDataDirsOnShutdown = doDelete;
         return this;
     }
 
@@ -177,14 +208,15 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
-                getLibDir(), _getDataDir(), WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(),
-                isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
+                _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), _getExecutables(),
                 getProcessListener(), getDefaultRootPassword(), getDriverClassName());
     }
 
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
+     *
      * @param isSecurityDisabled set isSecurityDisabled value
      * @return returns this
      */
@@ -205,20 +237,27 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getDataDir() {
-        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
+        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR)) {
             return DEFAULT_DATA_DIR + File.separator + getPort();
-        else
-            return getDataDir();
+        }
+        return getDataDir();
+    }
+
+    protected String _getTmpDir() {
+        if (isNull(getTmpDir()) || getTmpDir().equals(DEFAULT_TMP_DIR)) {
+            return DEFAULT_TMP_DIR + File.separator + getPort();
+        }
+        return getTmpDir();
     }
 
     protected boolean isNull(String string) {
-        if (string == null)
+        if (string == null) {
             return true;
+        }
         String trim = string.trim();
-        if (trim.length() == 0)
+        if (trim.length() == 0 || trim.equalsIgnoreCase("null")) {
             return true;
-        if (trim.equalsIgnoreCase("null"))
-            return true;
+        }
         return false;
     }
 
@@ -288,16 +327,14 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH"
-                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH "
-                        : "LD_LIBRARY_PATH";
+        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {
-        if (isUnpackingFromClasspath)
+        if (isUnpackingFromClasspath) {
             return getBinariesClassPathLocation();
-        else
-            return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
+        }
+        return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
     }
 
     public boolean isUnpackingFromClasspath() {
@@ -311,7 +348,7 @@ public class DBConfigurationBuilder {
     }
 
     public String getURL(String databaseName) {
-        return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
+        return "jdbc:mariadb://localhost:" + getPort() + "/" + databaseName;
     }
 
     public List<String> _getArgs() {
@@ -336,5 +373,51 @@ public class DBConfigurationBuilder {
         checkIfFrozen("setDriverClassName");
         this.driverClassName = driverClassName;
         return this;
+    }
+
+    public DBConfigurationBuilder setDefaultCharacterSet(String defaultCharacterSet) {
+        checkIfFrozen("setDefaultCharacterSet");
+        this.defaultCharacterSet = defaultCharacterSet;
+        return this;
+    }
+
+    public String getDefaultCharacterSet() {
+        return defaultCharacterSet;
+    }
+
+    public DBConfigurationBuilder setExecutable(Executable executable, String path) {
+        checkIfFrozen("setExecutable");
+        executables.put(requireNonNull(executable, "executable"), () -> new File(requireNonNull(path, "path")));
+        return this;
+    }
+
+    public DBConfigurationBuilder setExecutable(Executable executable, Supplier<File> pathSupplier) {
+        checkIfFrozen("setExecutable");
+        executables.put(requireNonNull(executable, "executable"), requireNonNull(pathSupplier, "pathSupplier"));
+        return this;
+    }
+
+    protected Map<Executable, Supplier<File>> _getExecutables() {
+        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mysqld" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mysql" + getExtension()));
+        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mysqldump" + getExtension()));
+        executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+        executables.putIfAbsent(InstallDB, () -> {
+            File bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+            if (bin.exists()) {
+                return bin;
+            }
+            return new File(baseDir, "scripts/mysql_install_db" + getExtension());
+        });
+
+        return executables;
+    }
+
+    public boolean isWindows() {
+        return WIN32.equals(getOS());
+    }
+
+    protected String getExtension() {
+        return isWindows() ? ".exe" : "";
     }
 }

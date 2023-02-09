@@ -30,17 +30,16 @@ import org.slf4j.event.Level;
  */
 public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher {
 
-    @Override
-    public Level dispatch(OutputStreamType type, String line) {
-        if (type == OutputStreamType.STDOUT)
+    @Override public Level dispatch(OutputStreamType type, String line) {
+        if (type == OutputStreamType.STDOUT) {
             return Level.INFO;
-        else { // STDERR
-            if (line.contains("ERROR") || line.contains("error"))
-                return Level.ERROR;
-            else if (line.toLowerCase().contains("warning") && line.toLowerCase().contains("aborted connection"))
-               return Level.DEBUG;
-            else
-                return Level.INFO;
+        }
+        if (line.contains("ERROR") || line.contains("error")) {
+            return Level.ERROR;
+        } else if (line.toLowerCase().contains("warning") && line.toLowerCase().contains("aborted connection")) {
+            return Level.DEBUG;
+        } else {
+            return Level.INFO;
         }
     }
 

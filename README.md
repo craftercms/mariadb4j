@@ -10,8 +10,7 @@ If you are using this project, consider [supporting it :heart: by donating via P
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
-
+[![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=master)](https://app.travis-ci.com/vorburger/MariaDB4j)
 
 How? (Java)
 ----
@@ -57,6 +56,29 @@ db.source("path/to/resource.sql");
 
 If you would like to / need to start a specific DB version you already have, instead of the version currently
 packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/")` or `-DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion`.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and `@Override getBinariesClassPathLocation()` in `DBConfigurationBuilder` to return where to find it (check the source of the default implementation).
+
+How (using existing native MariaDB binaries)
+----
+MariaDB4j supports using existing native MariaDB binaries on the host system rather than unpacking MariaDB from the
+classpath. You can control this via the `DBConfigurationBuilder`:
+
+```java
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+
+DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+config.setPort(0); // 0 => autom. detect free port
+config.setUnpackingFromClasspath(false);
+config.setLibDir(System.getProperty("java.io.tmpdir") + "/MariaDB4j/no-libs");
+
+// On Linux it may be necessary to set both the base dir and the server executable
+// as the `mysqld` binary lives in `/usr/sbin` rather than `/usr/bin`
+config.setBaseDir("/usr");
+config.setExecutable(Server, "/usr/sbin/mysqld");
+
+// On MacOS with MariaDB installed via homebrew, you can just set base dir to the output of `brew --prefix`
+config.setBaseDir("/usr/local") // or "/opt/homebrew" for M1 Macs
+```
 
 How (Spring)
 ----
@@ -265,7 +287,7 @@ The `MariaDB4jRule` provides 2 methods for getting data on the running DB:
   }
 
   ```
-  
+
 The `MariaDB4jRule` class extends the JUnit [`ExternalResource`](https://github.com/junit-team/junit4/wiki/rules#externalresource-rules) - which means it starts the DB process before each test method is run, and stops it at the end of that test method.
 
 The `MariaDB4jRule(DBConfiguration dbConfiguration, String dbName, String resource)` Constructor, allows to initialize your DB with a provided SQL Script (resource = path to script file) to setup needed database, tables and data.
@@ -303,7 +325,7 @@ Q: Is MariaDB4j stable enough for production? I need the data to be safe, and pe
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
 Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory
-A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`.
+A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`. On Ubuntu Focal 20.04, you need to `sudo apt update && sudo apt install libncurses5`.
 
 Q: Is there another project that does something similar to this one?
 A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  [Testcontainers' has something similar which we recommend you use ](https://www.testcontainers.org/modules/databases/mariadb/) if you can run containers (Docker).  Also OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
@@ -329,7 +351,7 @@ When doing a release, here are a few things to do every time:
     mvn -Dmaven.test.skip=true package
 ```
 
-4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date, and update the version numbers in this README.
+4. Finalize [CHANGELOG.md](CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
 
 5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
