@@ -128,8 +128,9 @@ public class DB {
             // Since 10.4.6, this needs to be specified to allow root login from any user and avoid creating an extra user,
             // basically like it used to do in 10.3 and before
             builder.addArgument("--auth-root-authentication-method=normal");
+            builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+            builder.addArgument("--tmpdir=" + tmpDir.getAbsolutePath(), false);
             builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
-            builder.addFileArgument("--tmpdir", tmpDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
@@ -204,7 +205,8 @@ public class DB {
             }
 
             boolean secured = false;
-            try (Connection conn = DriverManager.getConnection(configuration.getURL("mysql"), "root", "")) {
+            String jdbcUrl = "jdbc:mysql://localhost:" + configuration.getPort() + "/mysql";
+            try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "")) {
                 secured = false;
                 logger.info("Unsecured database detected, running the secure installation script against the database.");
             } catch (SQLException e) {
@@ -277,7 +279,14 @@ public class DB {
             builder.addArgument("--max_allowed_packet=64M");
         }
         builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
-        builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+
+        if (!configuration.isWindows()) {
+            builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+            builder.addArgument("--tmpdir=" + tmpDir.getAbsolutePath(), false);
+        } else {
+            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
+        }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
@@ -300,6 +309,10 @@ public class DB {
             }
         }
         return false;
+    }
+
+    protected File newExecutableFile(String dir, String exec) {
+        return new File(baseDir, dir + "/" + exec + getWinExeExt());
     }
 
     protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
