@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>2.6.0.1</version>
+        <version>2.6.0.2</version>
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
@@ -21,6 +21,7 @@
 
     <modules>
         <module>mariaDB4j-db-mac64-10.4.20</module>
+        <module>mariaDB4j-db-alpine64-10.4.20</module>
         <module>mariaDB4j-db-linux64-10.4.20</module>
     </modules>
 </project>

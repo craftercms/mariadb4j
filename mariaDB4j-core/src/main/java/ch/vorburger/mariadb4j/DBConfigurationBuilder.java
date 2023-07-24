@@ -47,6 +47,7 @@ public class DBConfigurationBuilder {
     protected static final String WIN64 = "win64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
+    protected static final String ALPINE = "alpine";
 
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
@@ -56,7 +57,7 @@ public class DBConfigurationBuilder {
 
     // all these are just some defaults
     protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN64
-            : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+            : SystemUtils.IS_OS_MAC ? OSX : OsUtils.isAlpine() ? ALPINE : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -294,6 +295,8 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
+                databaseVersion = "mariadb-10.4.20";
+            else if (ALPINE.equals(getOS()))
                 databaseVersion = "mariadb-10.4.20";
             else if (LINUX.equals(getOS()))
                 databaseVersion = "mariadb-10.4.20";
