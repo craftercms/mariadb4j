@@ -166,8 +166,8 @@ then
     exit 1
   fi
 else
-  print_defaults="@bindir@/my_print_defaults"
-  mysql_command="@bindir@/mysql"
+  print_defaults="/Users/vita.alhambra/dev/mariadb/bin/my_print_defaults"
+  mysql_command="/Users/vita.alhambra/dev/mariadb/bin/mysql"
 fi
 
 if test ! -x "$print_defaults"
