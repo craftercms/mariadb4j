@@ -8,35 +8,36 @@
         <echo message="Project path      : ${project.basedir}"/>
         <echo message="Output location   : ${project.build.directory}"/>
         <echo message="MariaDB version   : ${mariaDB.version}"/>
+        <echo message="MariaDB download version   : ${mariaDB.download.version}"/>
     </target>
 
     <target name="download" depends="env"
         description="Download linux tar.gz file from mariadb.com">
-        <echo message="Downloading linux MariaDB ${mariaDB.version} file ..." />
-        <get src="https://downloads.mariadb.com/MariaDB/mariadb-${mariaDB.version}/bintar-linux-glibc_214-x86_64/mariadb-${mariaDB.version}-linux-glibc_214-x86_64.tar.gz"
+        <echo message="Downloading linux MariaDB ${mariaDB.download.version} file ..." />
+        <get src="https://downloads.mariadb.com/MariaDB/mariadb-${mariaDB.download.version}/bintar-linux-glibc_214-x86_64/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64.tar.gz"
             skipexisting="true"
             quiet="true"
-            dest="${project.basedir}/mariadb-${mariaDB.version}-linux-glibc_214-x86_64.tar.gz" />
+            dest="${project.basedir}/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64.tar.gz" />
     </target>
 
     <target name="extract" depends="env,download"
         description="Extract project files">
         <echo message="Extracting tar.gz file" />
 
-        <untar src="${project.basedir}/mariadb-${mariaDB.version}-linux-glibc_214-x86_64.tar.gz"
+        <untar src="${project.basedir}/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64.tar.gz"
                 dest="${project.build.directory}"
                 compression="gzip" />
 
         <echo message="Copying share folders and files" />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux">
-            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-glibc_214-x86_64">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64">
                 <include name="share/**/*"/>
             </fileset>
         </copy>
 
         <echo message="Copying bin files" />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
-            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-glibc_214-x86_64/bin">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64/bin">
                 <include name="mysql"/>
                 <include name="mysqld"/>
                 <include name="mysqldump"/>
@@ -50,7 +51,7 @@
 
         <echo message="Copying script files" />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/scripts">
-            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-glibc_214-x86_64/scripts">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.download.version}-linux-glibc_214-x86_64/scripts">
                 <include name="*"/>
             </fileset>
         </copy>

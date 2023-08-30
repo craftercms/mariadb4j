@@ -6,15 +6,16 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>2.6.0.4</version>
+        <version>2.6.0.5</version>
         <relativePath>../../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-db-linux64</artifactId>
-    <version>10.4.31</version>
+    <version>10.4.31.1</version>
 
     <properties>
-        <mariaDB.version>10.4.31</mariaDB.version>
+        <mariaDB.version>10.4.31.1</mariaDB.version>
+        <mariaDB.download.version>10.4.31</mariaDB.download.version>
     </properties>
 
     <build>
@@ -37,6 +38,7 @@
                                 <property name="project.basedir" value="${project.basedir}"/>
                                 <property name="project.build.directory" value="${project.build.directory}"/>
                                 <property name="mariaDB.version" value="${mariaDB.version}"/>
+                                <property name="mariaDB.download.version" value="${mariaDB.download.version}"/>
                                 <ant antfile="${project.basedir}/prepare.xml">
                                 </ant>
                             </target>
