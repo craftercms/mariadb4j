@@ -41,7 +41,7 @@
         <springboot.version>2.7.15</springboot.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <snakeyaml.version>2.0</snakeyaml.version> <!-- Override the version defined by spring-boot -->
+        <snakeyaml.version>2.2</snakeyaml.version> <!-- Override the version defined by spring-boot -->
     </properties>
 
     <build>
