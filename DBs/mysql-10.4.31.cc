@@ -2686,12 +2686,12 @@ static void initialize_readline ()
 #endif
 
   /* Tell the completer that we want a crack first. */
-#if defined(USE_NEW_READLINE_INTERFACE && !defined(__APPLE_CC__)
+#if defined(USE_NEW_READLINE_INTERFACE) && !defined(__APPLE_CC__)
   rl_attempted_completion_function= (rl_completion_func_t*)&new_mysql_completion;
   rl_completion_entry_function= (rl_compentry_func_t*)&no_completion;
 
   rl_add_defun("magic-space", (rl_command_func_t *)&fake_magic_space, -1);
-#elif defined(USE_LIBEDIT_INTERFACE && !defined(__APPLE_CC__)
+#elif defined(USE_LIBEDIT_INTERFACE) && !defined(__APPLE_CC__)
   rl_attempted_completion_function= (CPPFunction*)&new_mysql_completion;
   rl_completion_entry_function= &no_completion;
   rl_add_defun("magic-space", (Function*)&fake_magic_space, -1);

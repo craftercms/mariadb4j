@@ -1,6 +1,7 @@
 #!/bin/bash
 
 JEMALLOC_VERSION=5.3.0
+TARGET_DIR="$LAUNCH_DIR/mariaDB4j-db-mac64-10.4.31.2/src/main/resources/ch/vorburger/mariadb4j/mariadb-10.4.31.2/osx/"
 
 cecho () {
 	if [ "$2" == "info" ] ; then
@@ -79,6 +80,20 @@ function buildMariaDB() {
 }
 function copyMariaDBArtifacts() {
     # Copy the artifacts from MariaDB build to DBs/...
+    pushd .
+    cd ~/dev/mariadb
+    cp -r scripts "$TARGET_DIR/"
+    cp -r shared "$TARGET_DIR/"
+    cp bin/my_print_results "$TARGET_DIR/bin"
+    cp bin/mysql "$TARGET_DIR/bin"
+    cp bin/mysql_install_db "$TARGET_DIR/bin"
+    cp bin/mysql_secure_installation "$TARGET_DIR/bin"
+    cp bin/mysql_upgrade "$TARGET_DIR/bin"
+    cp bin/mysqlcheck "$TARGET_DIR/bin"
+    cp bin/mysqld "$TARGET_DIR/bin"
+    cp bin/mysqldump "$TARGET_DIR/bin" 
+    cp bin/resolveip "$TARGET_DIR/bin" 
+    popd
 }
 
 function main() {
