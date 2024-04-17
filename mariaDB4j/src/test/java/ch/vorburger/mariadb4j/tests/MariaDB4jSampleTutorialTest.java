@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,29 +50,36 @@ public class MariaDB4jSampleTutorialTest {
      * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on
      * the host, instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
-    @Test public void testLocalMariaDB() throws Exception {
-//        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-          // TODO rm isWindows() after making this test work on Windows, see https://github.com/vorburger/MariaDB4j/issues/713
-//        if (!config.isWindows()) {
-//            assertExecutable("/usr/sbin/mysqld");
+    @Test
+    public void testLocalMariaDB() throws Exception {
+//        final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
+//        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 10.11\\bin\\mysqld.exe";
 //
-//            config.setPort(0); // 0 => autom. detect free port
-//            config.setUnpackingFromClasspath(false);
+//        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+//
+//        config.setPort(0); // 0 => autom. detect free port
+//        config.setUnpackingFromClasspath(false);
+//
+//        if (!config.isWindows()) {
+//            assertExecutable(LINUX_EXECUTABLE);
 //            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
 //            config.setBaseDir("/usr");
-//            config.setExecutable(Server, "/usr/sbin/mysqld");
-//            check(config);
+//            config.setExecutable(Server, LINUX_EXECUTABLE);
 //        } else {
-//            System.out.println("testLocalMariaDB() SKIPPED because isWindows()");
+//            assertExecutable(WINDOWS_EXECUTABLE);
+//            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
+//            config.setBaseDir("C:\\Program Files\\MariaDB 10.11");
+//            config.setExecutable(Server, WINDOWS_EXECUTABLE);
 //        }
+//        check(config);
     }
 
-    private void assertExecutable(String path) {
-        if (!(new File(path).canExecute())) {
-            throw new IllegalStateException(path
-                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
-        }
-    }
+//    private void assertExecutable(String path) {
+//        if (!new File(path).canExecute()) {
+//            throw new IllegalStateException(path
+//                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
+//        }
+//    }
 
     /**
      * Illustrates how to use a mysqld binary that is extracted from "embedded"
@@ -132,6 +140,15 @@ public class MariaDB4jSampleTutorialTest {
         config.setDefaultRootPassword("root");
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
+
+        // Starting with MariaDB 10.4, the root user has an invalid password.
+        // We will therefore modify the root user password to a secure random string (a security best practice).
+        // Using the UID of the user that owns the data directory, we can execute this initial bootstrapping command:
+        // Note that on Windows MariaDB apparently does not implement this, still uses empty string password for the
+        // root user, so we can just use the root user.
+//        var randomRootPassword = RandomStringUtils.random(69, 97, 122, true, true);
+//        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + randomRootPassword + "');",
+//                config.isWindows() ? "root" : System.getProperty("user.name"), "");
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
         if (!"test".equals(dbName)) {

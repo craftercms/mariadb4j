@@ -61,8 +61,6 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     private int port = -1;
     @Parameter()
     private String socket;
-    @Parameter()
-    private String binariesClassPathLocation;
 
     @Parameter
     private String[] args;

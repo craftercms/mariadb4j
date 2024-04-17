@@ -1,7 +1,7 @@
+_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since 2011! 🫶_
+
 What?
 =====
-
-_Please :star: Star on GitHub and **support me 🫶 through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance!_
 
 MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL® Database Server", see [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL®) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
@@ -11,6 +11,9 @@ MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backw
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
 [![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=main)](https://app.travis-ci.com/vorburger/MariaDB4j)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MariaDB4j/MariaDB4j/main.svg)](https://results.pre-commit.ci/latest/github/MariaDB4j/MariaDB4j/main)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/MariaDB4j/MariaDB4j/badge)](https://securityscorecards.dev/viewer/?uri=github.com/MariaDB4j/MariaDB4j)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7865/badge)](https://www.bestpractices.dev/projects/7865)
 
 How? (Java)
 ----
@@ -26,8 +29,8 @@ An example of this can be found in the source tree, in [`MariaDB4jSampleTutorial
    ```
 
 2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
-is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
-then you can simply specify a more durable location of your data directory in the `DBConfiguration`, like so:
+   is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
+   then you can simply specify a more durable location of your data directory in the `DBConfiguration`, like so:
 
    ```java
    DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
@@ -43,9 +46,9 @@ then you can simply specify a more durable location of your data directory in th
    ```
 
 4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
-`DriverManager`; note that you could easily configure this URL
-to be used in any JDBC connection pool. MySQL uses a `test` database by default,
-and a `root` user with no password is also a default.
+   `DriverManager`; note that you could easily configure this URL
+   to be used in any JDBC connection pool. MySQL uses a `test` database by default,
+   and a `root` user with no password is also a default.
 
    ```java
    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
@@ -101,7 +104,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.0")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.2")
 }
 ```
 
@@ -127,35 +130,33 @@ MariaDB4j JAR binaries are available from:
 
 1. Maven central:
 
-```xml
-<dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
-    <artifactId>mariaDB4j</artifactId>
-    <version>3.0.0</version>
-</dependency>
-```
+   ```xml
+   <dependency>
+       <groupId>ch.vorburger.mariaDB4j</groupId>
+       <artifactId>mariaDB4j</artifactId>
+       <version>3.0.2</version>
+   </dependency>
+   ```
 
-2. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
+1. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 
-Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken.
+1. Not Bintray! (Up to version 2.1.3 MariaDB4j was on Bintray.  Starting with version 2.2.1 we’re only using Maven central.  The 2.2.1 that is on Bintray is broken.)
 
-For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
-source; just git clone this and then ./mvnw install or deploy. -- MariaDB4j's Maven then coordinates are:
+1. Local build: For bleeding edge `-SNAPSHOT` versions, you (or your build server) can easily build it yourself from
+   source; just `git clone` this repo, and then `./mvnw install` (or `deploy`) it. -- MariaDB4j's Maven then coordinates are:
 
-```xml
-<dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
-    <artifactId>mariaDB4j</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-</dependency>
-```
+Database Maven Artifacts
+------------------------
 
-If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
+If you use your own packaged versions of MariaDB native binaries, then the `mariaDB4j-core` artifact JAR,
 which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.
 
-Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
+You can also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
 
-You could also override the version(s) of the respective (transitive) mariaDB4j-db dependency to downgrade it, and should so be able to use the latest mariaDB4j-core & app artifact JARs even with older versions of the JAR archives containing the native mariaDB executables etc. if your project for some reason is stuck on a fixed DB version, but wants to get the latest MariaDB4j.
+You could also override the version(s) of the respective (transitive) `mariaDB4j-db-*` dependency to downgrade it, and should so be able to use the latest `mariaDB4j-core` artifact JARs, even with older`versions of the JAR archives containing the native mariaDB executables etc. This may be useful if your project for some reason needs a fixed older DB version, but wants to get the latest MariaDB4j launcher Java code.
+
+Release Notes
+-------------
 
 [Release Notes are in CHANGES.md](CHANGES.md).
 
@@ -342,8 +343,11 @@ FAQ
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
-Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory
+Q: `ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory`
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`. On Ubuntu Focal 20.04, you need to `sudo apt update && sudo apt install libncurses5`.
+
+Q: `/tmp/MariaDB4j/base/bin/mariadbd: error while loading shared libraries: libcrypt.so.1: cannot open shared object file: No such file or directory`
+A: Similar to above, and using e.g. https://pkgs.org/search/?q=libcrypt.so.1 we can see that e.g. `sudo dnf install libxcrypt-compat` does the trick for Fedora 39.
 
 Q: Is there another project that does something similar to this one?
 A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  [Testcontainers' has something similar which we recommend you use](https://www.testcontainers.org/modules/databases/mariadb/) if you can run containers (Docker).  Also OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
@@ -351,7 +355,7 @@ A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-em
 Release?
 --------
 
-Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-*are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app <modules>.  The mariaDB4j-pom-lite & DBs/mariaDB4j-db-* with their manually maintained fixed <version> however are simply deployed manually with a direct ./mvnw deploy as shown in the last step.
+Remember that `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app `<modules>`.  The `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` with their manually maintained fixed `<version>` however are simply deployed manually with a direct ./mvnw deploy as shown in the last step.
 
 When doing a release, here are a few things to do every time:
 

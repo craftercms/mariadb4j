@@ -43,7 +43,7 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class DBConfigurationBuilder {
 
-    protected static final String WIN32 = "win32";
+    protected static final String WINX64 = "winx64";
     protected static final String WIN64 = "win64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
@@ -256,7 +256,7 @@ public class DBConfigurationBuilder {
             return true;
         }
         String trim = string.trim();
-        if (trim.length() == 0 || trim.equalsIgnoreCase("null")) {
+        if (trim.length() == 0 || "null".equalsIgnoreCase(trim)) {
             return true;
         }
         return false;
@@ -330,7 +330,8 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
+        return SystemUtils.IS_OS_WINDOWS ? "PATH"
+                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {
@@ -417,7 +418,7 @@ public class DBConfigurationBuilder {
     }
 
     public boolean isWindows() {
-        return WIN32.equals(getOS());
+        return WINX64.equals(getOS());
     }
 
     protected String getExtension() {

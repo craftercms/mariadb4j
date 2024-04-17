@@ -159,10 +159,6 @@ public class DB {
         return mysqlInstallProcess;
     }
 
-    private static File toWindowsPath(File file) throws IOException {
-        return new File(file.getCanonicalPath().replace(" ", "%20"));
-    }
-
     /**
      * Installs the database to the location specified in the configuration.
      *
@@ -206,6 +202,7 @@ public class DB {
             String jdbcUrl = "jdbc:mysql://localhost:" + configuration.getPort() + "/mysql";
             try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "")) {
                 secured = false;
+                logger.debug("Connection detail: '{}'", conn);
                 logger.info("Unsecured database detected, running the secure installation script against the database.");
             } catch (SQLException e) {
                 secured = true;

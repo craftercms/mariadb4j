@@ -23,6 +23,8 @@ import ch.vorburger.exec.OutputStreamLogDispatcher;
 import ch.vorburger.exec.OutputStreamType;
 import org.slf4j.event.Level;
 
+import java.util.Locale;
+
 /**
  * OutputStreamLogDispatcher for MariaDB. See <a href="https://github.com/vorburger/MariaDB4j/issues/27">issue #27</a>.
  *
@@ -36,7 +38,7 @@ public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher 
         }
         if (line.contains("ERROR") || line.contains("error")) {
             return Level.ERROR;
-        } else if (line.toLowerCase().contains("warning") && line.toLowerCase().contains("aborted connection")) {
+        } else if (line.toLowerCase(Locale.ENGLISH).contains("warning") && line.toLowerCase(Locale.ENGLISH).contains("aborted connection")) {
             return Level.DEBUG;
         } else {
             return Level.INFO;
