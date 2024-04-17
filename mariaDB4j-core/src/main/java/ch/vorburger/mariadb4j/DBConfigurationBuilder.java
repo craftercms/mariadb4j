@@ -295,13 +295,13 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.2";
+                databaseVersion = "mariadb-11.3.2";
             else if (ALPINE.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.2";
+                databaseVersion = "mariadb-11.3.2";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.2";
+                databaseVersion = "mariadb-11.3.2";
             else if (WIN64.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.2";
+                databaseVersion = "mariadb-11.3.2";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
@@ -402,16 +402,16 @@ public class DBConfigurationBuilder {
     }
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
-        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mysqld" + getExtension()));
-        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mysql" + getExtension()));
-        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mysqldump" + getExtension()));
+        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mariadbd" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mariadb" + getExtension()));
+        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mariadb-dump" + getExtension()));
         executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
         executables.putIfAbsent(InstallDB, () -> {
-            File bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+            File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
             if (bin.exists()) {
                 return bin;
             }
-            return new File(baseDir, "scripts/mysql_install_db" + getExtension());
+            return new File(baseDir, "scripts/mariadb-install-db" + getExtension());
         });
 
         return executables;

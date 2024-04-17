@@ -39,9 +39,10 @@ import org.junit.Test;
  */
 public class StartSimulatedForAllPlatformsTest {
 
-//    @Test public void simulatedStartWin64() throws Exception {
-//        checkPlatformStart(DBConfigurationBuilder.WINX64);
-//    }
+    @Ignore
+    @Test public void simulatedStartWin64() throws Exception {
+        checkPlatformStart(DBConfigurationBuilder.WINX64);
+    }
 
     @Test public void simulatedStartLinux() throws Exception {
         checkPlatformStart(DBConfigurationBuilder.LINUX);

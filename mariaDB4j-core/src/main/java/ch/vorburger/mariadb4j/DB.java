@@ -141,18 +141,18 @@ public class DB {
     }
 
     ManagedProcess secureInstallPreparation() throws ManagedProcessException, IOException {
-        logger.info("Run mysql_secure_installation for embedded database at: " + baseDir);
-        File installDbCmdFile = newExecutableFile("bin", "mysql_secure_installation");
+        logger.info("Run mariadb-secure-installation for embedded database at: " + baseDir);
+        File installDbCmdFile = newExecutableFile("bin", "mariadb-secure-installation");
         if (!installDbCmdFile.exists())
             throw new ManagedProcessException(
-                    "mysql_secure_installation was not found in bin/ under " + baseDir.getAbsolutePath());
+                    "mariadb-secure-installation was not found in bin/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_secure_installation"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mariadb-secure-installation"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         String interaction = StringUtils.replace(MYSQL_SECURE_INSTALLATION_INTERACTION, ROOT_PASSWORD_PLACEHOLDER,
                 configuration.getDefaultRootPassword());
         builder.setInputStream(new ByteArrayInputStream(
-                interaction.getBytes(Charset.forName(StandardCharsets.US_ASCII.name()))));
+                interaction.getBytes(StandardCharsets.US_ASCII)));
         builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
         addPortAndMaybeSocketArguments(builder);
         ManagedProcess mysqlInstallProcess = builder.build();
@@ -516,9 +516,9 @@ public class DB {
                 Util.forceExecutable(configuration.getExecutable(Server));
                 Util.forceExecutable(configuration.getExecutable(Dump));
                 Util.forceExecutable(configuration.getExecutable(Client));
-                Util.forceExecutable(newExecutableFile("bin", "mysql_secure_installation"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql_upgrade"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqlcheck"));
+                Util.forceExecutable(newExecutableFile("bin", "mariadb-secure-installation"));
+                Util.forceExecutable(newExecutableFile("bin", "mariadb-upgrade"));
+                Util.forceExecutable(newExecutableFile("bin", "mariadb-check"));
                 Util.forceExecutable(newExecutableFile("bin", "resolveip"));
             }
         } catch (IOException e) {

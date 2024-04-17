@@ -6,10 +6,10 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.0.1</version>
         <relativePath>../../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
-    <artifactId>mariaDB4j-db-mac64</artifactId>
-    <version>10.4.31.2</version>
+    <artifactId>mariaDB4j-db-alpine64</artifactId>
+    <version>11.3.2</version>
 </project>

@@ -78,7 +78,7 @@ public class MariaDB4jService {
         db.start();
     }
 
-    @PreDestroy // note this is from javax.annotation, not a Spring Framework dependency
+    @PreDestroy // note this is from jakarta.annotation, not a Spring Framework dependency
     public void preDestroy() throws ManagedProcessRuntimeException {
         try {
             stop();

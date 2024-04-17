@@ -54,7 +54,8 @@ public class MariaDB4jSampleDumpTest {
     private DBConfigurationBuilder config;
     private static final String DBNAME = "planetexpress";
 
-    @Before public void beforeTest() throws ManagedProcessException, SQLException {
+    @Before
+    public void beforeTest() throws ManagedProcessException, SQLException {
         config = DBConfigurationBuilder.newBuilder();
         config.setPort(0);// 0 => autom. detect free port
         config.setSecurityDisabled(false);
@@ -74,7 +75,8 @@ public class MariaDB4jSampleDumpTest {
         assertEquals("John A Zoidberg", results.get(2));
     }
 
-    @Test public void sqlDump() throws IOException, ManagedProcessException, SQLException {
+    @Test
+    public void sqlDump() throws IOException, ManagedProcessException, SQLException {
         File outputDumpFile = File.createTempFile("sqlDump ", ".sql");
         ManagedProcess dumpProcess = db.dumpSQL(outputDumpFile, DBNAME, "root", "root");
         dumpProcess.start();
@@ -84,7 +86,8 @@ public class MariaDB4jSampleDumpTest {
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 
-    @Test public void xmlDump() throws IOException, SAXException, ManagedProcessException, ParserConfigurationException, SQLException {
+    @Test
+    public void xmlDump() throws IOException, SAXException, ManagedProcessException, ParserConfigurationException, SQLException {
         File outputDumpFile = File.createTempFile("xmlsqlDump", ".xml");
         ManagedProcess dumpProcess = db.dumpXML(outputDumpFile, DBNAME, "root", "root");
         dumpProcess.start();
@@ -98,7 +101,8 @@ public class MariaDB4jSampleDumpTest {
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 
-    @After public void afterTest() throws ManagedProcessException {
+    @After
+    public void afterTest() throws ManagedProcessException {
         db.stop();
     }
 }
