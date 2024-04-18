@@ -1,7 +1,7 @@
 1. Run a docker with correct MariaDB version:
 
 ```Dockerfile
-docker run wodby/mariadb:10.4
+docker run wodby/mariadb:11
 ```
 
 2. Copy binary files from `/usr/bin/` to `DBs/mariaDB4j-db-alpine64-11.3.2/src/main/resources/ch/vorburger/mariadb4j/mariadb-11.3.2/alpine/bin`
