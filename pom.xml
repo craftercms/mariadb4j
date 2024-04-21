@@ -39,7 +39,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springframework.version>6.1.5</springframework.version>
         <springboot.version>3.2.3</springboot.version>
-        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+        <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <snakeyaml.version>2.2</snakeyaml.version> <!-- Override the version defined by spring-boot -->
