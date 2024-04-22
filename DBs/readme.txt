@@ -1,5 +1,5 @@
 These folders contain, per platform and version,
-the bin/mysql_install_db, mysqld, mysql, mysqldump, mysqlcheck, my_print_defaults & share/*
+the bin/mariadb-install-db, mariadbd, mariadb, mariadb-dump, mariadb-check, my_print_defaults & share/*
 
 These files come from a standard MariaDB distribution.
 
