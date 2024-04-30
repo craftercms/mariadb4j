@@ -65,6 +65,13 @@
             </fileset>
         </copy>
 
+        <echo message="Copying mariadb-install-db file" />
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.download.version}-linux-systemd-x86_64/scripts">
+                <include name="mariadb-install-db" />
+            </fileset>
+        </copy>
+
         <echo message="Copying script files" />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/scripts">
             <fileset dir="${project.build.directory}/mariadb-${mariaDB.download.version}-linux-systemd-x86_64/scripts">
