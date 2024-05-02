@@ -3,7 +3,6 @@
 JEMALLOC_VERSION=5.3.0
 MARIADB_VERSION=11.3.2
 MARIADB_CRAFTER_VERSION=11.3.2
-TARGET_DIR="$LAUNCH_DIR/mariaDB4j-db-mac64-$MARIADB_CRAFTER_VERSION/src/main/resources/ch/vorburger/mariadb4j/mariadb-$MARIADB_CRAFTER_VERSION/osx/"
 
 cecho () {
 	if [ "$2" == "info" ] ; then
@@ -92,7 +91,7 @@ function copyMariaDBArtifacts() {
     pushd .
     cd ~/dev/mariadb
     cp -r scripts "$TARGET_DIR/"
-    cp -r shared "$TARGET_DIR/"
+    cp -r share "$TARGET_DIR/"
     cp bin/my_print_defaults "$TARGET_DIR/bin"
     cp bin/mariadb "$TARGET_DIR/bin"
     cp scripts/mariadb-install-db "$TARGET_DIR/bin"
@@ -119,6 +118,7 @@ function main() {
 }
 
 LAUNCH_DIR=`pwd`
+TARGET_DIR="$LAUNCH_DIR/mariaDB4j-db-mac64-$MARIADB_CRAFTER_VERSION/src/main/resources/ch/vorburger/mariadb4j/mariadb-$MARIADB_CRAFTER_VERSION/osx/"
 
 pushd .
 preFlightCheck
