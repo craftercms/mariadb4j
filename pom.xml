@@ -42,7 +42,7 @@
         <springframework.version>6.1.5</springframework.version>
         <springboot.version>3.2.4</springboot.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
-        <errorprone.version>2.26.1</errorprone.version>
+        <errorprone.version>2.29.2</errorprone.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <snakeyaml.version>2.2</snakeyaml.version> <!-- Override the version defined by spring-boot -->
