@@ -7,12 +7,12 @@
         <artifactId>mariaDB4j-pom-lite</artifactId>
         <!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>3.1.0.2</version>
+        <version>3.1.0.3</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-pom</artifactId>
-    <version>3.1.0.2</version>
+    <version>3.1.0.3</version>
     <packaging>pom</packaging>
 
     <scm>
