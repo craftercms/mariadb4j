@@ -19,17 +19,15 @@
  */
 package ch.vorburger.mariadb4j.springframework.boot;
 
-import ch.vorburger.mariadb4j.MariaDB4jService;
 import ch.vorburger.mariadb4j.springboot.autoconfigure.DataSourceAutoConfiguration;
-import ch.vorburger.mariadb4j.springboot.autoconfigure.MariaDB4jSpringConfiguration;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.ApplicationPidFileWriter;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -41,28 +39,40 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @EnableAutoConfiguration
-@Import({ DataSourceAutoConfiguration.class, MariaDB4jSpringConfiguration.class })
+@Import({DataSourceAutoConfiguration.class, MariaDB4jSpringService.class})
 public class MariaDB4jApplication implements ExitCodeGenerator {
 
     private final MariaDB4jSpringService mariaDB4j;
 
+    /**
+     * Constructor.
+     *
+     * @param mariaDB4j a {@link ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService}
+     *     object
+     */
     @Autowired
     public MariaDB4jApplication(MariaDB4jSpringService mariaDB4j) {
         this.mariaDB4j = mariaDB4j;
     }
 
+    /**
+     * Main.
+     *
+     * @param args an array of {@link java.lang.String} objects
+     * @throws java.lang.Exception if any.
+     */
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
         app.setBannerMode(Mode.OFF);
         app.run(args);
 
-        while (true) { }
+        while (true) {}
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getExitCode() {
         return mariaDB4j.getLastException() == null ? 0 : -1;
     }
-
 }

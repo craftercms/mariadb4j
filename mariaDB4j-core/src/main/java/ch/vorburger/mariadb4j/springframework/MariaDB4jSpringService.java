@@ -21,44 +21,47 @@ package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.MariaDB4jService;
-import java.util.Objects;
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
  *
  * <p>Other than implementing {@link Lifecycle} to get auto-started, this class allows applications
- * using it to programmatically set a default port/socket/data- &amp; base directory in their
- * {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
+ * using it to programmatically set a default port/socket/data- &amp; base directory in their {@link
+ * Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
  * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
  * main() command line arguments.
  *
  * <p>This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we
- * don't want it to be auto-started by component scan without explicit declaration in a @Configuration
- * (or XML)
+ * don't want it to be auto-started by component scan without explicit declaration in
+ * a @Configuration (or XML)
  *
  * @author Michael Vorburger
  */
 public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
 
-    public final static String PORT = "mariaDB4j.port";
-    public final static String SOCKET = "mariaDB4j.socket";
-    public final static String DATA_DIR = "mariaDB4j.dataDir";
-    public final static String TMP_DIR = "mariaDB4j.tmpDir";
-    public final static String BASE_DIR = "mariaDB4j.baseDir";
-    public final static String LIB_DIR = "mariaDB4j.libDir";
-    public final static String UNPACK = "mariaDB4j.unpack";
-    public final static String ARGS = "mariaDB4j.args";
-    public final static String OS_USER = "mariaDB4j.osUser";
-    public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
-    public final static String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
-    public final static String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
-    public final static String DRIVER_CLASS_NAME = "mariaDB4j.driverClassName";
+    public static final String PORT = "mariaDB4j.port";
+    public static final String SOCKET = "mariaDB4j.socket";
+    public static final String DATA_DIR = "mariaDB4j.dataDir";
+    public static final String TMP_DIR = "mariaDB4j.tmpDir";
+    public static final String BASE_DIR = "mariaDB4j.baseDir";
+    public static final String LIB_DIR = "mariaDB4j.libDir";
+    public static final String UNPACK = "mariaDB4j.unpack";
+    public static final String ARGS = "mariaDB4j.args";
+    public static final String OS_USER = "mariaDB4j.osUser";
+    public static final String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
+    public static final String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
+    public static final String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
+    public static final String DRIVER_CLASS_NAME = "mariaDB4j.driverClassName";
 
     protected ManagedProcessException lastException;
 
@@ -69,44 +72,37 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 
     @Value("${" + PORT + ":-1}")
     public void setDefaultPort(int port) {
-        if (port != -1)
-            getConfiguration().setPort(port);
+        if (port != -1) getConfiguration().setPort(port);
     }
 
     @Value("${" + SOCKET + ":NA}")
     public void setDefaultSocket(String socket) {
-        if (!"NA".equals(socket))
-            getConfiguration().setSocket(socket);
+        if (!"NA".equals(socket)) getConfiguration().setSocket(socket);
     }
 
     @Value("${" + DATA_DIR + ":NA}")
     public void setDefaultDataDir(String dataDir) {
-        if (!"NA".equals(dataDir))
-            getConfiguration().setDataDir(dataDir);
+        if (!"NA".equals(dataDir)) getConfiguration().setDataDir(new File(dataDir));
     }
 
     @Value("${" + TMP_DIR + ":NA}")
     public void setDefaultTmpDir(String tmpDir) {
-        if (!"NA".equals(tmpDir))
-            getConfiguration().setTmpDir(tmpDir);
+        if (!"NA".equals(tmpDir)) getConfiguration().setTmpDir(tmpDir);
     }
 
     @Value("${" + BASE_DIR + ":NA}")
     public void setDefaultBaseDir(String baseDir) {
-        if (!"NA".equals(baseDir))
-            getConfiguration().setBaseDir(baseDir);
+        if (!"NA".equals(baseDir)) getConfiguration().setBaseDir(new File(baseDir));
     }
 
     @Value("${" + LIB_DIR + ":NA}")
     public void setDefaultLibDir(String libDir) {
-        if (!"NA".equals(libDir))
-            getConfiguration().setLibDir(libDir);
+        if (!"NA".equals(libDir)) getConfiguration().setLibDir(new File(libDir));
     }
 
     @Value("${" + UNPACK + ":#{null}}")
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
-        if (unpack != null)
-            getConfiguration().setUnpackingFromClasspath(unpack);
+        if (unpack != null) getConfiguration().setUnpackingFromClasspath(unpack);
     }
 
     @Value("${" + ARGS + ":#{null}}")
@@ -120,14 +116,12 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 
     @Value("${" + OS_USER + ":NA}")
     public void setDefaultOsUser(String osUser) {
-        if (!"NA".equals(osUser))
-            getConfiguration().addArg("--user=" + osUser);
+        if (!"NA".equals(osUser)) getConfiguration().addArg("--user=" + osUser);
     }
 
     @Value("${" + DEFAULT_CHARSET + ":NA}")
     public void setDefaultCharacterSet(String charset) {
-        if (!Objects.equals(charset, "NA"))
-            getConfiguration().setDefaultCharacterSet(charset);
+        if (!Objects.equals(charset, "NA")) getConfiguration().setDefaultCharacterSet(charset);
     }
 
     @Value("${" + SECURITY_DISABLED + ":#{null}}")
@@ -174,5 +168,4 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public ManagedProcessException getLastException() {
         return lastException;
     }
-
 }

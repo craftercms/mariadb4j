@@ -14,10 +14,10 @@
          DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
          non-SNAPSHOT, existing ones do NOT get changed).
      -->
-    <version>3.1.0.5</version>
+    <version>3.3.0.0</version>
     <packaging>pom</packaging>
 
-    <name>MariaDB4j</name>
+    <name>MariaDB4j POM Lite</name>
     <description>Java wrapper / launcher for MariaDB (or MySQL)</description>
     <url>https://github.com/craftercms/MariaDB4j</url>
     <inceptionYear>2012</inceptionYear>
@@ -67,7 +67,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
+                <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central-releases</publishingServerId>
@@ -76,7 +76,7 @@
 
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <configuration>
                     <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
                     <excludeResources>true</excludeResources>
@@ -215,7 +215,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

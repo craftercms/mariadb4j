@@ -5,65 +5,106 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED v3.1.0
+## UNRELEASED future v3.2.1 or v3.3.0
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...main for unreleased changes; it will include:
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.2.0...main for unreleased future changes; it will include:
 
-* docs: Add 💸 OpenCollective etc. to README
+* TBD
+
+## v3.2.0 - 2024-04-10 (Issue #[1137](https://github.com/MariaDB4j/MariaDB4j/issues/1137))
+
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.2.0 for more details, but the TL;DR is:
+
+* Bumped MariaDB binaries from 10.11.5 to 11.4.5 (LTS); incl. macOS!
+* Bumped ch.vorburger.exec [from 3.2.0 to 3.3.1](https://github.com/vorburger/ch.vorburger.exec/releases) (also released today)
+* Switched tests from mysql-connector-java to mariadb-java-client
+* Bumped many other external Maven dependencies
+* Replaced Checkstyle with Google Code Format
+* Fixed root causes of tests which never ran
+* README cleaned up
+* CI related chores
+
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...3.2.0 for full diff.
+
+## v3.1.0 - 2024-03-27
+
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.1.0:
+
 * feat: Upgrade MariaDB binaries for Linux & Mac from 10.2.11 to 10.11.5 by @TheKnowles in https://github.com/vorburger/MariaDB4j/pull/771
+* fix: Upgrade ch.vorburger.exec [from 3.1.5 to 3.2.0](https://github.com/vorburger/ch.vorburger.exec/compare/exec-3.1.5...exec-3.2.0); fixes e.g. [exec#9](https://github.com/vorburger/ch.vorburger.exec/issues/9)
 * fix: Resource Leak from DirectoryStream in DBShutdownHook
+* docs: Add 💸 OpenCollective etc. to README
+
+### Chore & Cleanup etc.
+
 * build: Add ErrorProne Code Quality Tool (fixes #736)
-* build(deps): Bump commons-dbutils:commons-dbutils from 1.8.0 to 1.8.1
-* build(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin
-
-## v3.0.2 - 2023-09-16
-
-* chore: Add github-actions ecosystem to Dependabot
-* build: Add Maven Dependency Tree Dependency Submission
-* build: Do not run Maven Dependency Submission Action on PRs
-* build: Merge Linux & Windows CI GitHub Action into 1 single YAML file
+* chore: Apply StepSecurity best practices (see #785 for #661 and#786)
+* chore: Create scorecard.yml (see #661)
+* chore: Better Workflow Action Permissions (fixes #791)
+* chore: Limit Workflow Action Permissions (fixes #791)
+* chore: Remove Checkstyle from Pre-Commit (see #786)
+* chore: Remove old DBs/ binaries (for #661)
+* chore: Remove shellcheck from Pre-Commit (see #786)
+* chore: Switch 3.0.3-SNAPSHOT to 3.1.0-SNAPSHOT
+* docs: Add OpenSSF Best Practices badge to README (fixes #661)
+* docs: Add libcrypt.so.1 tip to README (fixes #916)
+* docs: Add Pre-Commit Hooks badge to README (see #786)
+* fix: Remove trailing whitespaces from many files (for #786)
+* fix: Reproducible Builds (re. #661)
+* fix: Use JEP 247 to fix broken build under Java 21 (fixes #903)
+* test: Added Windows MariaDB install action & enabled local mariadb test for Windows (#781 fixes #713)
 
 ### Dependency Upgrades
 
-* Bump checkstyle from 10.10.0 to 10.11.0
-* Bump checkstyle from 10.11.0 to 10.12.0
-* Bump ch.vorburger.exec to 3.1.5
-* Bump commons-io from 2.11.0 to 2.13.0
-* Bump license-maven-plugin from 2.0.0 to 2.0.1
-* Bump license-maven-plugin from 2.0.1 to 2.1.0
-* Bump maven-checkstyle-plugin from 3.2.2 to 3.3.0
-* Bump maven-compat from 3.9.1 to 3.9.2
-* Bump maven-gpg-plugin from 3.0.1 to 3.1.0
-* Bump maven-plugin-annotations from 3.8.2 to 3.9.0
-* Bump maven-plugin-plugin from 3.8.2 to 3.9.0
-* Bump maven-project-info-reports-plugin from 3.4.3 to 3.4.5
-* Bump maven-release-plugin from 3.0.0 to 3.0.1
-* Bump maven-source-plugin from 3.2.1 to 3.3.0
-* Bump maven.version from 3.9.1 to 3.9.2
-* Bump springboot.version from 3.0.6 to 3.1.0
-* build(deps): Bump actions/checkout from 3 to 4
-* build(deps): Bump checkstyle from 10.12.0 to 10.12.1
-* build(deps): Bump commons-dbutils:commons-dbutils from 1.7 to 1.8.0
+* build: Bump Maven from 3.9.0 to 3.9.6 (and Wrapper from 3.1.1 to 3.2.0)
+* build(deps): Bump actions/checkout from 3.1.0 to 4.1.2
+* build(deps): Bump actions/dependency-review-action from 2.5.1 to 4.2.3
+* build(deps): Bump actions/setup-java from 3.13.0 to 4.2.1
+* build(deps): Bump actions/upload-artifact from 3.1.0 to 4.3.1
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump actions/checkout from 3.1.0 to 4.1.2
+* build(deps): Bump actions/dependency-review-action from 2.5.1 to 4.2.3
+* build(deps): Bump actions/setup-java from 3.13.0 to 4.2.1
+* build(deps): Bump actions/upload-artifact from 3.1.0 to 4.3.1
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump awalsh128/cache-apt-pkgs-action from 1.3.0 to 1.8.1
+* build(deps): Bump commons-io:commons-io from 2.13.0 to 2.15.1
 * build(deps): Bump com.puppycrawl.tools:checkstyle
-* build(deps): Bump license-maven-plugin from 2.1.0 to 2.2.0
-* build(deps): Bump maven-compat from 3.9.2 to 3.9.3
-* build(deps): Bump maven-invoker-plugin from 3.5.1 to 3.6.0
-* build(deps): Bump maven-shade-plugin from 3.4.1 to 3.5.0
-* build(deps): Bump maven.version from 3.9.2 to 3.9.3
-* build(deps): Bump maven.version from 3.9.3 to 3.9.4
-* build(deps): Bump mockito-core from 5.3.1 to 5.4.0
-* build(deps): Bump org.apache.maven:maven-compat from 3.9.3 to 3.9.4
-* build(deps): Bump org.mockito:mockito-core from 5.4.0 to 5.5.0
-* build(deps): Bump org.slf4j:slf4j-simple from 2.0.7 to 2.0.9
-* build(deps): Bump springboot.version from 3.1.0 to 3.1.1
-* build(deps): Bump springboot.version from 3.1.1 to 3.1.2
-* build(deps): Bump springboot.version from 3.1.2 to 3.1.3
+* build(deps): Bump errorprone.version from 2.21.1 to 2.26.1
+* build(deps): Bump github/codeql-action from 2.22.0 to 3.24.9
+* build(deps): Bump maven.version from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.4 to 3.9.6
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump awalsh128/cache-apt-pkgs-action from 1.3.0 to 1.8.1
+* build(deps): Bump commons-io:commons-io from 2.13.0 to 2.15.1
+* build(deps): Bump com.puppycrawl.tools:checkstyle
+* build(deps): Bump errorprone.version from 2.21.1 to 2.26.1
+* build(deps): Bump github/codeql-action from 2.22.0 to 3.24.9
+* build(deps): Bump maven.version from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven.plugins:maven-checkstyle-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-compiler-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-gpg-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-plugin-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-project-info-reports-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-shade-plugin
+* build(deps): Bump org.apache.maven.plugin-tools:maven-plugin-annotations
+* build(deps): Bump org.assertj:assertj-core from 3.24.2 to 3.25.3
+* build(deps): Bump org.codehaus.mojo:license-maven-plugin
+* build(deps): Bump org.mockito:mockito-core from 5.5.0 to 5.11.0
+* build(deps): Bump org.slf4j:slf4j-simple from 2.0.9 to 2.0.12
+* build(deps): Bump ossf/scorecard-action from 2.1.2 to 2.3.1
+* build(deps): Bump springboot.version from 3.1.3 to 3.2.4
+* build(deps): Bump step-security/harden-runner from 2.5.1 to 2.7.0
 
-This Changelog was manually written by the maintainer, based on: `git log --no-merges --pretty=format:"%s" mariaDB4j-3.0.1..main | sort | grep -v "\[maven-release-plugin\]" | sed 's/.*/\* &/' > CHANGELOG-git.md` (TODO: Write a thing which "collapses" Dependency Upgrades).
+This Changelog was manually written by the maintainer, based on: `git log --no-merges --pretty=format:"%s" mariaDB4j-3.0.2..main | sort | grep -v "\[maven-release-plugin\]" | sed 's/.*/\* &/' > CHANGELOG-git.md` (TODO: Write a thing which "collapses" Dependency Upgrades, instead of doing it by hand).
 
-**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.1...mariaDB4j-3.0.2
+**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...mariaDB4j-3.1.0
 
 ## v3.0.1 - 2023-05-01 (Issue #[696](https://github.com/MariaDB4j/MariaDB4j/issues/696))
+
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.0.1:
 
 * feat: Switch from Java 11 to Java 17
 * feat: Expose Configuration defaultCharacterSet on MariaDB4jSpringService (#674)
@@ -142,13 +183,15 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 
 ## v2.6.0 - 2022-10-01 (Issue #[621](https://github.com/MariaDB4j/MariaDB4j/issues/621))
 
+https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-2.6.0:
+
 * Remove wrong space from DYLD_FALLBACK_LIBRARY_PATH by @vorburger in https://github.com/vorburger/MariaDB4j/pull/561
 * Support using locally installed MariaDB (#560) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/565
 * Add documentation for using native MariaDB binaries by @mrdziuban in https://github.com/vorburger/MariaDB4j/pull/622
 * Add configurable tmpdir by @simonzkl in https://github.com/vorburger/MariaDB4j/pull/604
 * Support default character set configuration. by @agostop in https://github.com/vorburger/MariaDB4j/pull/533
 * Remove `setDefaultCharacterSet()` from DBConfiguration (but not DBConfigurationBuilder) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/564
-* Remove explict Log4j dependency (no longer needed now) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/553
+* Remove explicit Log4j dependency (no longer needed now) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/553
 * Set source API default charset set to UTF-8 by @dassio in https://github.com/vorburger/MariaDB4j/pull/573
 * Switch Travis CI from Java 8 to 11 and Ubuntu Xenial 16.04 to Focal 20.04 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/566
 * Update pom.xml by @dev-fringe in https://github.com/vorburger/MariaDB4j/pull/515
@@ -234,6 +277,7 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 
 ## v2.5.0 - 2.5.3
 
+https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-2.5.3:
 ### New Features
 
 * Ability to pass an `InputStream` for initial sourcing by @asbachb in https://github.com/vorburger/MariaDB4j/pull/274 for #273

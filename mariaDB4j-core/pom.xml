@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>3.1.0.5</version>
+        <version>3.3.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-core</artifactId>
-    <name>MariaDB Core</name>
+    <name>MariaDB4j Core</name>
 
     <dependencies>
         <dependency>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>ch.vorburger.exec</groupId>
             <artifactId>exec</artifactId>
-            <version>3.1.4</version>
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -76,7 +76,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                 <archive>
                     <manifestEntries>

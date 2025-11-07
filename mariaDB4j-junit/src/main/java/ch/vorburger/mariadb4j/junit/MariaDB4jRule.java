@@ -23,6 +23,7 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ExternalResource;
 
@@ -40,8 +41,14 @@ public class MariaDB4jRule extends ExternalResource {
     }
 
     public MariaDB4jRule(int port) {
-        this(DBConfigurationBuilder.newBuilder().setPort(port).setSecurityDisabled(false)
-                .setDefaultRootPassword("root").build(), "", null);
+        this(
+                DBConfigurationBuilder.newBuilder()
+                        .setPort(port)
+                        .setSecurityDisabled(false)
+                        .setDefaultRootPassword("root")
+                        .build(),
+                "",
+                null);
     }
 
     @Override
@@ -54,8 +61,7 @@ public class MariaDB4jRule extends ExternalResource {
     protected void initDB() throws ManagedProcessException {
         if (!StringUtils.isEmpty(dbName)) {
             db.createDB(dbName, "root", "root");
-            if (!StringUtils.isEmpty(resource))
-                db.source(resource, "root", "root", dbName);
+            if (!StringUtils.isEmpty(resource)) db.source(resource, "root", "root", dbName);
         }
     }
 

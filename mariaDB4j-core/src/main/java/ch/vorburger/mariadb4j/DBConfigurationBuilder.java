@@ -24,10 +24,14 @@ import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+
 import static java.util.Objects.requireNonNull;
 
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
+
+import org.apache.commons.lang3.SystemUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -36,33 +40,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Builder for DBConfiguration. Has lot's of sensible default conventions etc.
+ *
+ * @author Michael Vorburger
  */
 public class DBConfigurationBuilder {
 
+    // TODO The defaulting logic here is too convulted, and should be redone one day...
+    //   It should be simple: By default, a unique ephemeral directory should be used (not based on
+    // port);
+    //   unless the user explicitly sets another directory, in which case that should be used
+    // instead.
+
     protected static final String WINX64 = "winx64";
-    protected static final String WIN64 = "win64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
     protected static final String ALPINE = "alpine";
 
-    private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+    private static final String DEFAULT_DATA_DIR = "/data";
 
-    private static final String DEFAULT_TMP_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/tmp";
+    private static final String DEFAULT_TMP_DIR = "/tmp";
 
     private String databaseVersion = null;
 
-    // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN64
-            : SystemUtils.IS_OS_MAC ? OSX : OsUtils.isAlpine() ? ALPINE : LINUX;
-    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-    protected String libDir = null;
+    // All of the following are just the defaults, which can be overridden
+    protected String osDirectoryName =
+            switch (Platform.get()) {
+                case ALPINE -> ALPINE;
+                case LINUX -> LINUX;
+                case MAC -> OSX;
+                case WINDOWS -> WINX64;
+            };
+    protected File baseDir = new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base");
+    protected File libDir = null;
 
-    protected String dataDir = DEFAULT_DATA_DIR;
-    protected String tmpDir = DEFAULT_TMP_DIR;
+    protected File dataDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR);
+    protected File tmpDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR);
+
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
@@ -82,8 +98,29 @@ public class DBConfigurationBuilder {
         return new DBConfigurationBuilder();
     }
 
-    protected DBConfigurationBuilder() {
+    public static DBConfigurationBuilder newBuilder(DBConfigurationBuilder cloneFrom) {
+        DBConfigurationBuilder builder = new DBConfigurationBuilder();
+        builder.databaseVersion = cloneFrom.databaseVersion;
+        builder.osDirectoryName = cloneFrom.osDirectoryName;
+        builder.baseDir = cloneFrom.baseDir;
+        builder.libDir = cloneFrom.libDir;
+        builder.dataDir = cloneFrom.dataDir;
+        builder.tmpDir = cloneFrom.tmpDir;
+        builder.socket = cloneFrom.socket;
+        builder.port = cloneFrom.port;
+        builder.isDeletingTemporaryBaseAndDataDirsOnShutdown =
+                cloneFrom.isDeletingTemporaryBaseAndDataDirsOnShutdown;
+        builder.isUnpackingFromClasspath = cloneFrom.isUnpackingFromClasspath;
+        builder.args = new ArrayList<>(cloneFrom.args);
+        builder.isSecurityDisabled = cloneFrom.isSecurityDisabled;
+        builder.frozen = cloneFrom.frozen;
+        builder.listener = cloneFrom.listener;
+        builder.defaultCharacterSet = cloneFrom.defaultCharacterSet;
+        builder.executables = new HashMap<>(cloneFrom.executables);
+        return builder;
     }
+
+    protected DBConfigurationBuilder() {}
 
     protected void checkIfFrozen(String setterName) {
         if (frozen) {
@@ -91,46 +128,57 @@ public class DBConfigurationBuilder {
         }
     }
 
-    public String getBaseDir() {
+    public File getBaseDir() {
         return baseDir;
     }
 
-    public DBConfigurationBuilder setBaseDir(String baseDir) {
+    public String path() {
+        return "MariaDB4j/" + java.util.UUID.randomUUID().toString() + "-" + port + "/";
+    }
+
+    public DBConfigurationBuilder setBaseDir(File baseDir) {
         checkIfFrozen("setBaseDir");
         this.baseDir = baseDir;
         return this;
     }
 
-    public String getLibDir() {
+    public File getLibDir() {
         if (libDir == null) {
-            return baseDir + "/libs";
+            libDir = new File(baseDir + "/libs");
         }
         return libDir;
     }
 
-    public DBConfigurationBuilder setLibDir(String libDir) {
+    public DBConfigurationBuilder setLibDir(File libDir) {
         checkIfFrozen("setLibDir");
         this.libDir = libDir;
         return this;
     }
 
-    public String getDataDir() {
+    public File getDataDir() {
         return dataDir;
     }
 
-    public DBConfigurationBuilder setDataDir(String dataDir) {
+    public DBConfigurationBuilder setDataDir(File dataDir) {
         checkIfFrozen("setDataDir");
         this.dataDir = dataDir;
         return this;
     }
 
-    public String getTmpDir() {
+    public File getTmpDir() {
         return tmpDir;
     }
 
     public DBConfigurationBuilder setTmpDir(String tmpDir) {
         checkIfFrozen("setTmpDir");
-        this.tmpDir = tmpDir;
+        this.tmpDir =
+                new File(
+                        (tmpDir == null)
+                                ? SystemUtils.JAVA_IO_TMPDIR
+                                        + File.separator
+                                        + path()
+                                        + DEFAULT_TMP_DIR
+                                : tmpDir);
         return this;
     }
 
@@ -170,12 +218,11 @@ public class DBConfigurationBuilder {
     }
 
     /**
-     * Defines if the configured data and base directories should be deleted on shutdown.
-     * If you've set the base and data directories to non temporary directories
-     * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway.
+     * Defines if the configured data and base directories should be deleted on shutdown. If you've
+     * set the base and data directories to non temporary directories using {@link
+     * #setBaseDir(File)} or {@link #setDataDir(File)}, then they'll also never get deleted anyway.
      *
-     * @param doDelete Default valule is true, set false to override
+     * @param doDelete Default value is true, set false to override
      * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
@@ -208,11 +255,31 @@ public class DBConfigurationBuilder {
     }
 
     public DBConfiguration build() {
+        if (dataDir == null || tmpDir == null) {
+            String p = SystemUtils.JAVA_IO_TMPDIR + "/" + path();
+            this.baseDir = new File(p + "/base");
+        }
+
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                _getTmpDir(), WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), _getExecutables(),
-                getProcessListener(), getDefaultRootPassword(), getDriverClassName());
+        return new DBConfiguration.Impl(
+                _getPort(),
+                _getSocket(),
+                _getBinariesClassPathLocation(),
+                getBaseDir(),
+                getLibDir(),
+                _getDataDir(),
+                _getTmpDir(),
+                isWindows(),
+                _getArgs(),
+                _getOSLibraryEnvironmentVarName(),
+                isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(),
+                this::getURL,
+                getDefaultCharacterSet(),
+                _getExecutables(),
+                getProcessListener(),
+                getDefaultRootPassword(),
+                getDriverClassName());
     }
 
     /**
@@ -237,29 +304,34 @@ public class DBConfigurationBuilder {
         return this;
     }
 
-    protected String _getDataDir() {
-        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR)) {
-            return DEFAULT_DATA_DIR + File.separator + getPort();
+    protected File _getDataDir() {
+        if (isNull(getDataDir())
+                || getDataDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_DATA_DIR))) {
+            return new File(
+                    SystemUtils.JAVA_IO_TMPDIR
+                            + File.separator
+                            + DEFAULT_DATA_DIR
+                            + File.separator
+                            + _getPort());
         }
         return getDataDir();
     }
 
-    protected String _getTmpDir() {
-        if (isNull(getTmpDir()) || getTmpDir().equals(DEFAULT_TMP_DIR)) {
-            return DEFAULT_TMP_DIR + File.separator + getPort();
+    protected File _getTmpDir() {
+        if (isNull(getTmpDir())
+                || getTmpDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_TMP_DIR))) {
+            return new File(
+                    SystemUtils.JAVA_IO_TMPDIR
+                            + File.separator
+                            + DEFAULT_TMP_DIR
+                            + File.separator
+                            + getPort());
         }
         return getTmpDir();
     }
 
-    protected boolean isNull(String string) {
-        if (string == null) {
-            return true;
-        }
-        String trim = string.trim();
-        if (trim.length() == 0 || "null".equalsIgnoreCase(trim)) {
-            return true;
-        }
-        return false;
+    protected boolean isNull(File file) {
+        return file == null;
     }
 
     protected int _getPort() {
@@ -294,19 +366,16 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-11.4.3";
-            else if (ALPINE.equals(getOS()))
-                databaseVersion = "mariadb-11.4.3";
-            else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-11.4.3";
-            else if (WIN64.equals(getOS()))
-                databaseVersion = "mariadb-11.4.3";
-            else
+            if (!OSX.equals(getOS())
+                    && !ALPINE.equals(getOS())
+                    && !LINUX.equals(getOS())
+                    && !WINX64.equals(getOS())) {
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
                                 + "of the package that the binaries are in, for: "
                                 + SystemUtils.OS_VERSION);
+            }
+            return "mariadb-11.4.5";
         }
         return databaseVersion;
     }
@@ -330,8 +399,11 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH"
-                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
+        return switch (Platform.get()) {
+            case LINUX, ALPINE -> "LD_LIBRARY_PATH";
+            case MAC -> "DYLD_FALLBACK_LIBRARY_PATH";
+            case WINDOWS -> "PATH";
+        };
     }
 
     protected String _getBinariesClassPathLocation() {
@@ -391,34 +463,69 @@ public class DBConfigurationBuilder {
 
     public DBConfigurationBuilder setExecutable(Executable executable, String path) {
         checkIfFrozen("setExecutable");
-        executables.put(requireNonNull(executable, "executable"), () -> new File(requireNonNull(path, "path")));
+        executables.put(
+                requireNonNull(executable, "executable"),
+                () -> new File(requireNonNull(path, "path")));
         return this;
     }
 
-    public DBConfigurationBuilder setExecutable(Executable executable, Supplier<File> pathSupplier) {
+    public DBConfigurationBuilder setExecutable(
+            Executable executable, Supplier<File> pathSupplier) {
         checkIfFrozen("setExecutable");
-        executables.put(requireNonNull(executable, "executable"), requireNonNull(pathSupplier, "pathSupplier"));
+        executables.put(
+                requireNonNull(executable, "executable"),
+                requireNonNull(pathSupplier, "pathSupplier"));
         return this;
     }
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
-        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mariadbd" + getExtension()));
-        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mariadb" + getExtension()));
-        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mariadb-dump" + getExtension()));
-        executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
-        executables.putIfAbsent(InstallDB, () -> {
-            File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
-            if (bin.exists()) {
-                return bin;
-            }
-            return new File(baseDir, "scripts/mariadb-install-db" + getExtension());
-        });
+        executables.putIfAbsent(
+                PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+
+        // See https://github.com/MariaDB4j/MariaDB4j/pull/1126/files#r2019771660
+        //   re. why we're keeping mysql*.exe but not packaging mariadb*.exe ...
+
+        executables.putIfAbsent(
+                Dump,
+                () ->
+                        isWindows()
+                                ? new File(baseDir, "bin/mysqldump.exe")
+                                : new File(baseDir, "bin/mariadb-dump"));
+
+        String name = isWindows() ? "mysql" : "mariadb";
+        executables.putIfAbsent(
+                Server, () -> new File(baseDir, "bin/" + name + "d" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/" + name + getExtension()));
+        executables.putIfAbsent(
+                InstallDB,
+                () -> {
+                    // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on
+                    // Windows...
+                    File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
+                    if (bin.exists()) return bin;
+
+                    bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+                    if (bin.exists()) return bin;
+
+                    bin = new File(baseDir, "scripts/" + name + "-install-db" + getExtension());
+                    if (bin.exists()) return bin;
+
+                    throw new IllegalStateException("Could not find installDB tool...");
+                });
 
         return executables;
     }
 
+    public File getExecutable(Executable executable) {
+        return _getExecutables().get(executable).get();
+    }
+
     public boolean isWindows() {
-        return WINX64.equals(getOS());
+        return Platform.OS.WINDOWS.equals(Platform.get());
+    }
+
+    public boolean isMacOS() {
+        return Platform.OS.MAC.equals(Platform.get());
     }
 
     protected String getExtension() {

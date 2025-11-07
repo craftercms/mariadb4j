@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>3.1.0.5</version>
+        <version>3.3.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-app</artifactId>
-    <name>MariaDB App</name>
+    <name>MariaDB4j Spring Boot Demo Application</name>
 
     <properties>
         <hikaricp.version>3.3.0</hikaricp.version> <!-- Override the version defined by spring-boot -->

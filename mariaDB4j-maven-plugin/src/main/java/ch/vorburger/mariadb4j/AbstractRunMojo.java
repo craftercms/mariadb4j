@@ -22,6 +22,13 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -29,15 +36,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Optional;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /**
- * Base class to run a MariaDB4j
- * Based on https://raw.githubusercontent.com/spring-projects/spring-boot/master/spring-boot-project/spring-boot-tools/spring-boot-maven-plugin/src/main/java/org/springframework/boot/maven/AbstractRunMojo.java
+ * Base class to run a MariaDB4j. Based on <a
+ * href="https://raw.githubusercontent.com/spring-projects/spring-boot/master/spring-boot-project/spring-boot-tools/spring-boot-maven-plugin/src/main/java/org/springframework/boot/maven/AbstractRunMojo.java">Spring
+ * Framework</a>.
  *
  * @author Phillip Webb
  * @author Stephane Nicoll
@@ -52,57 +55,41 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
     /**
      * The Maven project.
+     *
      * @since 1.0
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter()
-    private int port = -1;
-    @Parameter()
-    private String socket;
+    @Parameter private int port = -1;
+    @Parameter private String socket;
 
-    @Parameter
-    private String[] args;
+    @Parameter private String[] args;
 
-    /**
-     * if baseDir is set outside java.io.tmpdir, it won't be deleted.
-     */
-    @Parameter()
-    private String baseDir;
-    /**
-     * if libDir is set outside java.io.tmpdir, it won't be deleted
-     */
-    @Parameter()
-    private String libDir;
-    /**
-     * if dataDir is set outside java.io.tmpdir, it won't be deleted.
-     */
-    @Parameter()
-    private String dataDir;
+    /** If baseDir is set outside java.io.tmpdir, it won't be deleted. */
+    @Parameter private File baseDir;
+
+    /** If libDir is set outside java.io.tmpdir, it won't be deleted. */
+    @Parameter private File libDir;
+
+    /** If dataDir is set outside java.io.tmpdir, it won't be deleted. */
+    @Parameter private File dataDir;
 
     @Parameter(defaultValue = "test")
     protected String databaseName;
 
-
-    /**
-     * scriptCharset set this if you scripts are not UTF-8.
-     */
+    /** Set this if your scripts are not UTF-8. */
     @Parameter(defaultValue = "UTF-8")
     private String scriptCharset;
 
-    /**
-     * Path to scripts to run on the database once started.
-     */
-    @Parameter
-    private File[] scripts;
+    /** Path to scripts to run on the database once started. */
+    @Parameter private File[] scripts;
 
-    /**
-     * Skip the execution.
-     */
+    /** Skip the execution. */
     @Parameter(defaultValue = "false")
     private boolean skip;
 
+    /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (this.skip) {
@@ -112,8 +99,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
         run();
     }
 
-    private void run()
-            throws MojoExecutionException, MojoFailureException {
+    private void run() throws MojoExecutionException, MojoFailureException {
         runWithMavenJvm(resolveConfigurationBuilder());
     }
 
@@ -147,9 +133,19 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     }
 
     private Charset getScriptCharset() {
-        return Optional.ofNullable(scriptCharset).map(Charset::forName).orElse(StandardCharsets.UTF_8);
+        return Optional.ofNullable(scriptCharset)
+                .map(Charset::forName)
+                .orElse(StandardCharsets.UTF_8);
     }
 
+    /**
+     * runScripts.
+     *
+     * @param db a {@link ch.vorburger.mariadb4j.DB} object
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     * @throws java.io.IOException if any.
+     */
     public void runScripts(DB db, String dbName) throws ManagedProcessException, IOException {
         if (this.scripts != null) {
             if (getLog().isInfoEnabled()) {
@@ -157,12 +153,13 @@ public abstract class AbstractRunMojo extends AbstractMojo {
             }
             Charset charset = getScriptCharset();
             for (File scriptFile : this.scripts) {
-                //awesome http://www.adam-bien.com/roller/abien/entry/java_8_reading_a_file
-                //Though we should have in db to pass a file or inputstream so we don't overload memory. So
-                //TODO: add new function to db public void source(File resource, String username, String password, String dbName)
+                // awesome http://www.adam-bien.com/roller/abien/entry/java_8_reading_a_file
+                // Though we should have in db to pass a file or inputstream so we don't overload
+                // memory. So
+                // TODO: add new function to db public void source(File resource, String username,
+                // String password, String dbName)
                 String scriptText = new String(Files.readAllBytes(scriptFile.toPath()), charset);
                 db.run(scriptText, "root", "root", dbName);
-
             }
             getLog().info("Successfully run scripts");
         }
@@ -170,6 +167,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
     /**
      * Run with the current VM, using the specified arguments.
+     *
      * @param configurationBuilder builder of MariaDB4j
      * @throws MojoExecutionException in case of MOJO execution errors
      * @throws MojoFailureException in case of MOJO failures

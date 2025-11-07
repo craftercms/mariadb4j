@@ -19,13 +19,12 @@
  */
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
 
 /**
- * Exception thrown when unexpected thing happen in {@link ManagedProcess} and
- * <a href="https://github.com/vorburger/MariaDB4j/issues/88">caller needs an unchecked instead of a checked
- * exception</a>.
+ * Exception thrown when unexpected thing happen in {@link ch.vorburger.exec.ManagedProcess} and <a
+ * href="https://github.com/MariaDB4j/MariaDB4j/issues/88">caller needs an unchecked instead of a
+ * checked exception</a>.
  *
  * @author Michael Vorburger.ch
  */
@@ -33,6 +32,11 @@ public class ManagedProcessRuntimeException extends RuntimeException {
 
     private static final long serialVersionUID = -415492090964791430L;
 
+    /**
+     * Constructor.
+     *
+     * @param original a {@link ch.vorburger.exec.ManagedProcessException} object
+     */
     public ManagedProcessRuntimeException(ManagedProcessException original) {
         super(original.getMessage(), original.getCause());
     }

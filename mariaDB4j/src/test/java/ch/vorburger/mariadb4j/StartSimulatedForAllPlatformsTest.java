@@ -23,40 +23,51 @@ import static org.junit.Assert.assertTrue;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * Simulating starting MariaDB4j on all supported platforms.
  *
- * <p>This detects the recurring issue of some mariaDB startup script not being where it's expected to
- * be and breaking a platform when upgrading the binaries or making code changes.
+ * <p>This detects the recurring issue of some mariaDB startup script not being where it's expected
+ * to be and breaking a platform when upgrading the binaries or making code changes.
  *
  * @author Michael Vorburger
  */
 public class StartSimulatedForAllPlatformsTest {
 
-    @Ignore
-    @Test public void simulatedStartWin64() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.WINX64);
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
+    @Test
+    public void simulatedStartWin64() throws Exception {
+        try (var platform = new Platform(Platform.OS.WINDOWS)) {
+            checkPlatformStart(DBConfigurationBuilder.WINX64);
+        }
     }
 
-    @Test public void simulatedStartLinux() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.LINUX);
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
+    @Test
+    public void simulatedStartLinux() throws Exception {
+        try (var platform = new Platform(Platform.OS.LINUX)) {
+            checkPlatformStart(DBConfigurationBuilder.LINUX);
+        }
     }
 
-    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/497
-    @Test public void simulatedStartOSX() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.OSX);
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
+    @Test
+    public void simulatedStartOSX() throws Exception {
+        try (var platform = new Platform(Platform.OS.MAC)) {
+            checkPlatformStart(DBConfigurationBuilder.OSX);
+        }
     }
 
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
         configBuilder.setOS(platform);
-        configBuilder.setBaseDir(configBuilder.getBaseDir() + "/" + platform);
+        configBuilder.setBaseDir(new File(configBuilder.getBaseDir() + "/" + platform));
         DBConfiguration config = configBuilder.build();
 
         DB db = new DB(config);
@@ -72,7 +83,7 @@ public class StartSimulatedForAllPlatformsTest {
         // This is super important.. without this, the test is useless,
         // as it will not catch platform specific problems, because the files
         // from previous platform test will still be available
-        FileUtils.deleteDirectory(new File(config.getBaseDir()));
+        FileUtils.deleteDirectory(config.getBaseDir());
     }
 
     void checkManagedProcessExists(ManagedProcess proc) {
