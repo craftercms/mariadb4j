@@ -19,7 +19,6 @@
  */
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
-
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 import org.assertj.core.api.Assertions;

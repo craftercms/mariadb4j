@@ -65,7 +65,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 
     protected ManagedProcessException lastException;
 
-    @Value("${$DBVersion:mariadb-11.4.3}")
+    @Value("${$DBVersion:mariadb-11.8.4}")
     public void setDBVersion(String version) {
         getConfiguration().setDatabaseVersion(version);
     }
