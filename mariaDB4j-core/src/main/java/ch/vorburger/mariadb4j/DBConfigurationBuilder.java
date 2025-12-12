@@ -375,7 +375,7 @@ public class DBConfigurationBuilder {
                                 + "of the package that the binaries are in, for: "
                                 + SystemUtils.OS_VERSION);
             }
-            return "mariadb-11.8.4";
+            return "mariadb-11.8.5";
         }
         return databaseVersion;
     }
