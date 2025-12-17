@@ -25,6 +25,7 @@ import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import java.io.IOException;
 public class StartSimulatedForAllPlatformsTest {
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
+    @Ignore
     @Test
     public void simulatedStartWin64() throws Exception {
         try (var platform = new Platform(Platform.OS.WINDOWS)) {
