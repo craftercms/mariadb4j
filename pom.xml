@@ -46,7 +46,7 @@
         <errorprone.version>2.42.0</errorprone.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <snakeyaml.version>2.2</snakeyaml.version> <!-- Override the version defined by spring-boot -->
+        <snakeyaml.version>2.5</snakeyaml.version> <!-- Override the version defined by spring-boot -->
     </properties>
 
     <build>
