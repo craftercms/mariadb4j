@@ -33,15 +33,11 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Provides capability to install, start, and use an embedded database.
@@ -95,26 +91,16 @@ public class DB {
     public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
         DB db = new DB(config);
         db.prepareDirectories();
-        // If the data dir does not already exist and is empty, proceed to install normally.
-        // Otherwise, we will reuse the existing data directory.
-        try {
-            final Path absPath = Paths.get(config.getDataDir().getAbsolutePath());
-            if (Files.isDirectory(absPath)) {
-                try (Stream<Path> entries = Files.list(absPath)) {
-                    if (entries.findFirst().isEmpty()) {
-                        db.unpackEmbeddedDb();
-                        db.install();
-                        if (!db.configuration.isSecurityDisabled()) {
-                            db.runMysqlSecureInstallationScript();
-                        }
-                    }
-                }
-            }
 
-        } catch (IOException e) { // do not change the method signature, catch, wrap, and re-throw
-            throw new ManagedProcessException(e.getMessage(), e);
+        // Here the behavior differs from the upstream project:
+        // We always unpack the embedded DB, because there are scenarios
+        // where the baseDir is persistent, but the binaries need to be
+        // updated (e.g. Docker, upgrades...).
+        db.unpackEmbeddedDb();
+        db.install();
+        if (!db.configuration.isSecurityDisabled()) {
+            db.runMysqlSecureInstallationScript();
         }
-
         return db;
     }
 
