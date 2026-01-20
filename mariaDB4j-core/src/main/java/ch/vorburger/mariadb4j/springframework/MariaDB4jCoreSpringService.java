@@ -45,9 +45,11 @@ import java.util.Objects;
  * don't want it to be auto-started by component scan without explicit declaration in
  * a @Configuration (or XML)
  *
- * @author Michael Vorburger
+ * @author Michael Vorburger Note: Notice this class was moved to springboot module in upstream
+ *     repository. We are keeping it here (although renamed to avoid collission) to support Studio
+ *     which uses Spring Framework but not Spring Boot.
  */
-public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
+public class MariaDB4jCoreSpringService extends MariaDB4jService implements Lifecycle {
 
     public static final String PORT = "mariaDB4j.port";
     public static final String SOCKET = "mariaDB4j.socket";
