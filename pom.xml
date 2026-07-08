@@ -6,13 +6,13 @@
         <artifactId>mariaDB4j-pom-lite</artifactId>
         <!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>3.3.0.2</version>
+        <version>3.3.0.3</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-pom</artifactId>
     <name>MariaDB4j POM</name>
-    <version>3.3.0.2</version>
+    <version>3.3.0.3</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -40,8 +40,8 @@
         <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2024-03-27T22:37:40Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <springframework.version>6.2.11</springframework.version>
-        <springboot.version>3.5.6</springboot.version>
+        <springframework.version>6.2.19</springframework.version>
+        <springboot.version>3.5.16</springboot.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <errorprone.version>2.42.0</errorprone.version>
         <maven.compiler.source>21</maven.compiler.source>
