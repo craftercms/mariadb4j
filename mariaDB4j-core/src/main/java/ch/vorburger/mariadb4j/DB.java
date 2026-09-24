@@ -158,10 +158,8 @@ public class DB {
         builder.getEnvironment()
                 .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         String interaction =
-                StringUtils.replace(
-                        MYSQL_SECURE_INSTALLATION_INTERACTION,
-                        ROOT_PASSWORD_PLACEHOLDER,
-                        configuration.getDefaultRootPassword());
+                MYSQL_SECURE_INSTALLATION_INTERACTION.replace(
+                        ROOT_PASSWORD_PLACEHOLDER, configuration.getDefaultRootPassword());
         builder.setInputStream(
                 new ByteArrayInputStream(interaction.getBytes(StandardCharsets.US_ASCII)));
         builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false)
