@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## v3.3.2.0 - 2026-11-17
 
 * Upgrade mariadb-java-client (Connector/J) to 4.0.0
-* DBConfigurationBuilder.getURL() now returns a URL with ?sslMode=disable
+* DB.getURL() / DBConfiguration JDBC URLs now include a query string (?sslMode=disable), so callers adding parameters must append with '&'
+* MariaDB Connector/J 4 defaults sslMode to verify-full, so applications connecting to their own (non-embedded) server must set sslMode explicitly
 * The secure-install probe now uses sslMode=disable
 
 ## v3.3.0 - 2025-10-03 (Issue #[1250](https://github.com/MariaDB4j/MariaDB4j/issues/1250))
