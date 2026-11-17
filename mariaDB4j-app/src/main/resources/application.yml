@@ -3,7 +3,7 @@ spring:
     file: ./mariadb4j.pid
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:${mariaDB4j.port}/test
+    url: jdbc:mariadb://localhost:${mariaDB4j.port}/test?sslMode=disable
     username: root
     password:
 

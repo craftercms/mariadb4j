@@ -6,13 +6,13 @@
         <artifactId>mariaDB4j-pom-lite</artifactId>
         <!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>3.3.1.0</version>
+        <version>3.3.2.0</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-pom</artifactId>
     <name>MariaDB4j POM</name>
-    <version>3.3.1.0</version>
+    <version>3.3.2.0</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -215,6 +215,12 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
+            </dependency>
+            <!-- Overrides the Connector/J version imported from the Spring Boot BOM (3.5.10). -->
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>4.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -148,7 +148,7 @@ public class MariaDB4jStartMojoTest {
                         + db.getConfiguration().getPort()
                         + "/"
                         + databaseName
-                        + "?serverTimezone=UTC&user=root&password=root";
+                        + "?serverTimezone=UTC&user=root&password=root&sslMode=disable";
         return DriverManager.getConnection(jdbcUrl);
     }
 
