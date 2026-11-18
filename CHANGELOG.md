@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.3.2.0 - 2026-11-17
+
+* Upgrade mariadb-java-client (Connector/J) to 4.0.0
+* JDBC URLs from DBConfiguration.getURL(), DBConfigurationBuilder.getURL() and MariaDB4jRule.getURL() now include ?sslMode=disable, so extra parameters must be appended with '&'
+* MariaDB Connector/J 4 defaults sslMode to verify-full, so applications connecting to their own (non-embedded) server must set sslMode explicitly
+* The secure-install probe now uses sslMode=disable
+
+## v3.3.1.0 - 2026-09-24
+
+* Upgrade to upstream MariaDB4j 3.3.1 and Spring Boot 4.1.1 (Spring 7.0.9) (#421)
+* Upgrade dependencies (#420)
+* Rename the Spring service class to avoid a name collision with the springboot module (#393)
+* Fix unpacking the embedded MariaDB app when the data directory already exists (#392)
+* Add missing Maven project names
+* Upgrade the embedded MariaDB and MariaDB4j (#365)
+* Update the macOS build script for MariaDB 11.8.4 (#366)
+
 ## v3.3.0 - 2025-10-03 (Issue #[1250](https://github.com/MariaDB4j/MariaDB4j/issues/1250))
 
 ### TL;DR

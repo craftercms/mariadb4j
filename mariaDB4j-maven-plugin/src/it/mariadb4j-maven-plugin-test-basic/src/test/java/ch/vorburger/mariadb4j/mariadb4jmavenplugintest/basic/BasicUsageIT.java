@@ -42,9 +42,9 @@ public class BasicUsageIT {
     public void openDatabase() throws Exception {
         int port = Integer.parseInt(System.getProperty("mariadb4j.port"));
         assertTrue(port > 0, "expect positive port value: " + port);
-        String jdbcUrl = "jdbc:mariadb://localhost:" + port + "/foo";
+        String jdbcUrl = "jdbc:mariadb://localhost:" + port + "/foo?sslMode=disable";
         assertEquals(jdbcUrl, System.getProperty("mariadb.databaseurl"), "database url in system properties");
-        try (Connection conn = DriverManager.getConnection(jdbcUrl)) {
+        try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "root")) {
             try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE 'bar'")) {
                 List<String> tables = new ArrayList<>();

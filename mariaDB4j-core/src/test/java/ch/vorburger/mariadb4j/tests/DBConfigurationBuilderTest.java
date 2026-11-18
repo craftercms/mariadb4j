@@ -39,6 +39,15 @@ import java.nio.file.Path;
 public class DBConfigurationBuilderTest {
 
     @Test
+    public void jdbcUrlDisablesSslForEmbeddedServer() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setPort(33306);
+        assertEquals(
+                "jdbc:mariadb://localhost:33306/crafter?sslMode=disable",
+                builder.getURL("crafter"));
+    }
+
+    @Test
     public void defaultDataDirIsTemporaryAndIncludesPortNumber() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();

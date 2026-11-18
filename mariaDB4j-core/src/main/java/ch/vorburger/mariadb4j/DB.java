@@ -210,10 +210,9 @@ public class DB {
             }
 
             boolean secured = false;
-            String jdbcUrl =
-                    "jdbc:mysql://localhost:"
-                            + configuration.getPort()
-                            + "/mysql?permitMysqlScheme";
+            // Connector/J 4 defaults sslMode to verify-full. A TLS failure is an SQLException and
+            // would be misread as "already secured", so the probe stays on plaintext.
+            String jdbcUrl = unsecuredRootProbeUrl(configuration.getPort());
             try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "")) {
                 secured = false;
                 logger.debug("Connection detail: '{}'", conn);
@@ -242,6 +241,14 @@ public class DB {
             }
             stop();
         }
+    }
+
+    /**
+     * JDBC URL used to detect an unsecured embedded server (root, empty password). {@code
+     * sslMode=disable} is required because Connector/J 4 defaults to {@code verify-full}.
+     */
+    static String unsecuredRootProbeUrl(int port) {
+        return "jdbc:mysql://localhost:" + port + "/mysql?permitMysqlScheme&sslMode=disable";
     }
 
     protected String getWinExeExt() {

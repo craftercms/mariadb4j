@@ -424,7 +424,8 @@ public class DBConfigurationBuilder {
     }
 
     public String getURL(String databaseName) {
-        return "jdbc:mariadb://localhost:" + getPort() + "/" + databaseName;
+        // Connector/J 4 defaults sslMode to verify-full; the embedded server has no certificate.
+        return "jdbc:mariadb://localhost:" + getPort() + "/" + databaseName + "?sslMode=disable";
     }
 
     public List<String> _getArgs() {
